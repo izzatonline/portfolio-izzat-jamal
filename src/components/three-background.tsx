@@ -24,12 +24,15 @@ export function ThreeBackground() {
         setIsWebGLSupported(false);
         return;
       }
-    } catch (_) {
+    } catch {
       setIsWebGLSupported(false);
       return;
     }
 
     if (!containerRef.current) return;
+
+    // Store container reference for cleanup
+    const container = containerRef.current;
 
     // Scene setup
     const scene = new THREE.Scene();
@@ -54,11 +57,11 @@ export function ThreeBackground() {
     });
 
     // Use container dimensions instead of window
-    const width = containerRef.current.clientWidth;
-    const height = containerRef.current.clientHeight;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
     renderer.setSize(width, height);
     renderer.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
-    containerRef.current.appendChild(renderer.domElement);
+    container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
     // Create circular particle texture
@@ -147,11 +150,10 @@ export function ThreeBackground() {
 
     // Resize handler with container dimensions
     const handleResize = () => {
-      if (!cameraRef.current || !rendererRef.current || !containerRef.current)
-        return;
+      if (!cameraRef.current || !rendererRef.current || !container) return;
 
-      const width = containerRef.current.clientWidth;
-      const height = containerRef.current.clientHeight;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
 
       cameraRef.current.aspect = width / height;
       cameraRef.current.updateProjectionMatrix();
@@ -196,8 +198,8 @@ export function ThreeBackground() {
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
       }
-      if (containerRef.current && rendererRef.current) {
-        containerRef.current.removeChild(rendererRef.current.domElement);
+      if (container && rendererRef.current) {
+        container.removeChild(rendererRef.current.domElement);
       }
       if (particlesRef.current) {
         particlesRef.current.geometry.dispose();
