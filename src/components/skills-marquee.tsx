@@ -19,6 +19,16 @@ const skills = [
   "REST API",
   "PostgreSQL",
   "Prisma",
+  "Strapi",
+  "Kubernetes",
+  "Docker",
+  "Symfony",
+  "SQL",
+  "Axios",
+  "Jira",
+  "Python",
+  "Go",
+  "Styled Components",
 ];
 
 export function SkillsMarquee() {

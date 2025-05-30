@@ -16,11 +16,11 @@ export function Hero() {
       <div className="flex flex-col items-center text-center max-w-4xl mx-auto">
         <div className="relative">
           <Image
-            src="/images/izzatjamal.jpg"
+            src="/images/izzatjamal-cartoon.png"
             alt="Profile"
             width={240}
             height={240}
-            className="rounded-full object-cover w-[160px] h-[160px] sm:w-[240px] sm:h-[240px]"
+            className="rounded-full object-cover object-center w-[160px] h-[160px] sm:w-[240px] sm:h-[240px]"
             priority
           />
           <motion.div
@@ -46,13 +46,16 @@ export function Hero() {
           </h2>
 
           <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
-            <span className="text-foreground">Full-Stack Developer</span>
+            <span className="text-foreground">Frontend Developer</span>
           </h1>
 
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Passionate about building robust and user-friendly web applications.
-            Seeking opportunities to grow and learn in the ever-evolving world
-            of web development.
+            Mid-level Frontend Developer at Xsolla with 2 years of experience in
+            React, TypeScript, and Design System. Passionate about building
+            robust and user-friendly web applications. Known for collaboration,
+            initiative, and solving cross-functional issues like performance
+            optimization, refactoring, and integration. Currently exploring
+            backend development using Go to become a full-stack engineer.
           </p>
 
           <Button

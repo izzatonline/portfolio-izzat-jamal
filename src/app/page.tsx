@@ -8,6 +8,7 @@ import Link from "next/link";
 import { SkillsMarquee } from "@/components/skills-marquee";
 import { Projects } from "@/components/projects";
 import { Hero } from "@/components/hero";
+import { Learning } from "@/components/learning";
 
 export default function Home() {
   return (
@@ -25,6 +26,11 @@ export default function Home() {
           <Projects />
         </div>
 
+        {/* Learning Section */}
+        <div id="learning">
+          <Learning />
+        </div>
+
         {/* Contact Section */}
         <div className="w-full px-4 sm:px-8 md:px-16 lg:px-24 pb-32">
           <div className="text-center max-w-2xl mx-auto">
@@ -39,10 +45,7 @@ export default function Home() {
               Tell me about your next project
             </h2>
             <div className="flex gap-4 justify-center">
-              <Link
-                href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                target="_blank"
-              >
+              <Link href="tel:+60199211059" target="_blank">
                 <Button
                   size="lg"
                   className="rounded-full dark:bg-slate-700 dark:hover:bg-slate-600"
@@ -52,10 +55,7 @@ export default function Home() {
                   <Phone className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
-              <Link
-                href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                target="_blank"
-              >
+              <Link href="https://wa.me/60199211059" target="_blank">
                 <Button
                   size="lg"
                   className="rounded-full bg-[#25D366] hover:bg-[#20BD5A] text-white border-0"
