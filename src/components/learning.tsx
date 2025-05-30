@@ -1,5 +1,8 @@
+"use client";
+
 import { BookOpen, Code2, Palette, Zap } from "lucide-react";
 import Link from "next/link";
+import { GlowingCard } from "@/components/ui/glowing-card";
 
 export function Learning() {
   const courses = [
@@ -47,21 +50,23 @@ export function Learning() {
             key={index}
             href={course.url}
             target="_blank"
-            className="group relative overflow-hidden rounded-lg border bg-background p-6 hover:border-foreground/50 transition-colors"
+            className="block h-full"
           >
-            <div className="flex items-center gap-4">
-              <div className={`rounded-lg p-2 ${course.color}`}>
-                {course.icon}
+            <GlowingCard className="group relative overflow-hidden p-6 hover:border-foreground/50 transition-colors h-full">
+              <div className="flex items-start gap-4 h-full">
+                <div className={`rounded-lg p-2 ${course.color} shrink-0`}>
+                  {course.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-lg group-hover:text-foreground/80 transition-colors">
+                    {course.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {course.description}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-lg group-hover:text-foreground/80 transition-colors">
-                  {course.title}
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {course.description}
-                </p>
-              </div>
-            </div>
+            </GlowingCard>
           </Link>
         ))}
       </div>

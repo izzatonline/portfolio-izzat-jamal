@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Github, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { GlowingCard } from "@/components/ui/glowing-card";
 
 interface ProjectCardProps {
   title: string;
@@ -67,15 +68,13 @@ export function ProjectCard({
   );
 
   return (
-    <div
+    <GlowingCard
       className={`
-      rounded-lg border bg-card 
-      transition-all
-      hover:shadow-lg
-      dark:shadow-[0_0_15px_rgba(255,255,255,0.07)]
-      dark:hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]
-      ${isWork ? "lg:col-span-3" : ""}
-    `}
+        hover:shadow-lg
+        dark:shadow-[0_0_15px_rgba(255,255,255,0.07)]
+        dark:hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]
+        ${isWork ? "lg:col-span-3" : ""}
+      `}
     >
       <div
         className={`${
@@ -179,6 +178,6 @@ export function ProjectCard({
           </>
         )}
       </div>
-    </div>
+    </GlowingCard>
   );
 }
