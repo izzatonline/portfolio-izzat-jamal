@@ -41,7 +41,7 @@ export default function Home() {
                 alt="Handshake"
                 width={64}
                 height={64}
-                className="mx-auto mb-8"
+                className="mx-auto mb-8 dark:invert"
               />
               <h2 className="text-2xl sm:text-3xl font-bold mb-8 text-foreground">
                 Tell me about your next project

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { useTheme } from "next-themes";
 
@@ -12,31 +12,52 @@ export function ThreeBackground() {
   const particlesRef = useRef<THREE.Points | null>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
   const { theme } = useTheme();
+  const [isWebGLSupported, setIsWebGLSupported] = useState(true);
 
   useEffect(() => {
-    if (!containerRef.current || theme !== "dark") return;
+    // Check WebGL support
+    try {
+      const canvas = document.createElement("canvas");
+      const gl =
+        canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+      if (!gl) {
+        setIsWebGLSupported(false);
+        return;
+      }
+    } catch (_) {
+      setIsWebGLSupported(false);
+      return;
+    }
+
+    if (!containerRef.current) return;
 
     // Scene setup
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
-    // Camera setup
+    // Camera setup with adjusted FOV for mobile
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     const camera = new THREE.PerspectiveCamera(
-      75,
+      isMobile ? 60 : 75,
       window.innerWidth / window.innerHeight,
       0.1,
       1000
     );
-    camera.position.z = 5;
+    camera.position.z = isMobile ? 5 : 5; // Keep same distance for testing
     cameraRef.current = camera;
 
-    // Renderer setup
+    // Renderer setup with mobile optimizations
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
-      antialias: true,
+      antialias: !isMobile,
+      powerPreference: "high-performance",
     });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Use container dimensions instead of window
+    const width = containerRef.current.clientWidth;
+    const height = containerRef.current.clientHeight;
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(isMobile ? 1 : Math.min(window.devicePixelRatio, 2));
     containerRef.current.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
@@ -69,14 +90,13 @@ export function ThreeBackground() {
       return texture;
     };
 
-    // Particles setup
+    // Particles setup with mobile optimization
     const particlesGeometry = new THREE.BufferGeometry();
-    const particlesCount = 1000;
+    const particlesCount = isMobile ? 300 : 1000;
     const posArray = new Float32Array(particlesCount * 3);
 
     for (let i = 0; i < particlesCount * 3; i += 3) {
-      // Create a sphere distribution
-      const radius = 5;
+      const radius = isMobile ? 4 : 5; // Reduced radius for mobile
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
 
@@ -92,7 +112,7 @@ export function ThreeBackground() {
 
     const particleTexture = createParticleTexture();
     const particlesMaterial = new THREE.PointsMaterial({
-      size: 0.15,
+      size: isMobile ? 0.25 : 0.15,
       color: 0xffffff,
       transparent: true,
       opacity: 0.3,
@@ -106,6 +126,16 @@ export function ThreeBackground() {
     scene.add(particles);
     particlesRef.current = particles;
 
+    // Touch move handler for mobile devices
+    const handleTouchMove = (event: TouchEvent) => {
+      if (event.touches.length > 0) {
+        mouseRef.current.x =
+          (event.touches[0].clientX / window.innerWidth) * 2 - 1;
+        mouseRef.current.y =
+          -(event.touches[0].clientY / window.innerHeight) * 2 + 1;
+      }
+    };
+
     // Mouse move handler
     const handleMouseMove = (event: MouseEvent) => {
       mouseRef.current.x = (event.clientX / window.innerWidth) * 2 - 1;
@@ -113,19 +143,25 @@ export function ThreeBackground() {
     };
 
     window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
 
-    // Resize handler
+    // Resize handler with container dimensions
     const handleResize = () => {
-      if (!cameraRef.current || !rendererRef.current) return;
+      if (!cameraRef.current || !rendererRef.current || !containerRef.current)
+        return;
 
-      cameraRef.current.aspect = window.innerWidth / window.innerHeight;
+      const width = containerRef.current.clientWidth;
+      const height = containerRef.current.clientHeight;
+
+      cameraRef.current.aspect = width / height;
       cameraRef.current.updateProjectionMatrix();
-      rendererRef.current.setSize(window.innerWidth, window.innerHeight);
+      rendererRef.current.setSize(width, height);
     };
 
     window.addEventListener("resize", handleResize);
 
-    // Animation
+    // Animation with mobile optimization
+    let animationFrameId: number;
     const animate = () => {
       if (
         !particlesRef.current ||
@@ -135,15 +171,17 @@ export function ThreeBackground() {
       )
         return;
 
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
 
-      // Slower rotation
-      particlesRef.current.rotation.x += 0.0002;
-      particlesRef.current.rotation.y += 0.0002;
+      // Slower rotation for better performance on mobile
+      const rotationSpeed = isMobile ? 0.00005 : 0.0002;
+      particlesRef.current.rotation.x += rotationSpeed;
+      particlesRef.current.rotation.y += rotationSpeed;
 
-      // More pronounced mouse interaction
-      particlesRef.current.rotation.x += mouseRef.current.y * 0.001;
-      particlesRef.current.rotation.y += mouseRef.current.x * 0.001;
+      // More pronounced mouse/touch interaction
+      const interactionSpeed = isMobile ? 0.0002 : 0.001;
+      particlesRef.current.rotation.x += mouseRef.current.y * interactionSpeed;
+      particlesRef.current.rotation.y += mouseRef.current.x * interactionSpeed;
 
       rendererRef.current.render(sceneRef.current, cameraRef.current);
     };
@@ -153,7 +191,11 @@ export function ThreeBackground() {
     // Cleanup
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchmove", handleTouchMove);
       window.removeEventListener("resize", handleResize);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
       if (containerRef.current && rendererRef.current) {
         containerRef.current.removeChild(rendererRef.current.domElement);
       }
@@ -164,17 +206,22 @@ export function ThreeBackground() {
     };
   }, [theme]);
 
+  if (!isWebGLSupported) {
+    return null;
+  }
+
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 -z-10 pointer-events-none bg-background/50"
       style={{
         position: "fixed",
         top: 0,
         left: 0,
         width: "100vw",
         height: "100vh",
-        zIndex: -10,
+        zIndex: 0,
+        background: "transparent",
+        pointerEvents: "none",
       }}
       aria-hidden="true"
     />
