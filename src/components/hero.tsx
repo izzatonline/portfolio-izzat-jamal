@@ -17,7 +17,7 @@ export function Hero() {
         <div className="relative">
           <Image
             src="/images/izzatjamal-cartoon.png"
-            alt="Profile"
+            alt="Izzat Jamal"
             width={240}
             height={240}
             className="rounded-full object-cover object-center w-[160px] h-[160px] sm:w-[240px] sm:h-[240px]"
@@ -34,7 +34,7 @@ export function Hero() {
               ease: "easeInOut",
             }}
           >
-            <p className="text-xs sm:text-sm text-black dark:text-black">
+            <p className="text-xs sm:text-sm text-black dark:text-black sm:whitespace-nowrap">
               Izzat Jamal 👋
             </p>
           </motion.div>
@@ -46,16 +46,24 @@ export function Hero() {
           </h2>
 
           <h1 className="text-4xl sm:text-5xl font-bold leading-tight">
-            <span className="text-foreground">Frontend Developer</span>
+            <span className="text-foreground">Senior Frontend Engineer</span>
           </h1>
 
+          <p className="text-sm text-muted-foreground">
+            Kuala Lumpur, Malaysia
+          </p>
+
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Mid-level Frontend Developer at Xsolla with 2 years of experience in
-            React, TypeScript, and Design System. Passionate about building
-            robust and user-friendly web applications. Known for collaboration,
-            initiative, and solving cross-functional issues like performance
-            optimization, refactoring, and integration. Currently exploring
-            backend development using Go to become a full-stack engineer.
+            Senior Frontend Engineer at Xsolla with 2+ years of experience
+            building scalable, high-impact web systems using React and
+            TypeScript. Technical owner of a company-wide design system used
+            across multiple products, enabling faster delivery of consistent and
+            accessible user experiences. Experienced in platform-level frontend
+            development, CMS-driven content systems, third-party integrations,
+            and performance optimization. Comfortable working across frontend and
+            backend boundaries and collaborating closely with product, design,
+            and marketing stakeholders. Actively mentors engineers and teaches
+            frontend fundamentals through Xsolla School.
           </p>
 
           <Button

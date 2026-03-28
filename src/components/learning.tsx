@@ -1,56 +1,58 @@
 "use client";
 
-import { BookOpen, Code2, Palette, Zap } from "lucide-react";
+import { BookOpen, Code2, GraduationCap } from "lucide-react";
 import Link from "next/link";
 import { GlowingCard } from "@/components/ui/glowing-card";
 
-export function Learning() {
-  const courses = [
-    {
-      title: "Frontend Masters",
-      description:
-        "Deep learning of frontend system design, performance, backend with Go and PHP, and system design for backend",
-      icon: <Code2 className="h-6 w-6" />,
-      url: "https://frontendmasters.com",
-      color: "bg-blue-500/10 text-blue-500",
-    },
-    {
-      title: "Three.js Journey",
-      description:
-        "Learning Three.js for creating immersive 3D web experiences",
-      icon: <Zap className="h-6 w-6" />,
-      url: "https://threejs-journey.com",
-      color: "bg-purple-500/10 text-purple-500",
-    },
-    {
-      title: "Animations.dev",
-      description: "Mastering web animations and motion design",
-      icon: <Palette className="h-6 w-6" />,
-      url: "https://animations.dev",
-      color: "bg-pink-500/10 text-pink-500",
-    },
-    {
-      title: "CSS for JavaScript Developers",
-      description:
-        "Continuous learning of advanced CSS techniques and best practices",
-      icon: <BookOpen className="h-6 w-6" />,
-      url: "https://courses.joshwcomeau.com/css-for-js",
-      color: "bg-green-500/10 text-green-500",
-    },
-  ];
+type CourseItem = {
+  title: string;
+  institution: string;
+  duration: string;
+  icon: React.ReactNode;
+  url: string;
+  color: string;
+};
 
+const courses: CourseItem[] = [
+  {
+    title: "Certified Associate in Front-end Development",
+    institution: "TalentLabs",
+    duration: "Aug 2023 – Dec 2023",
+    icon: <GraduationCap className="h-6 w-6" aria-hidden />,
+    url: "https://www.talentlabs.io",
+    color: "bg-emerald-500/10 text-emerald-500",
+  },
+  {
+    title: "Data Science Training Program",
+    institution: "360DigiTMG",
+    duration: "Apr 2022 – Jun 2022",
+    icon: <BookOpen className="h-6 w-6" aria-hidden />,
+    url: "https://360digitmg.com",
+    color: "bg-amber-500/10 text-amber-500",
+  },
+  {
+    title: "Go Basics",
+    institution: "Frontend Masters",
+    duration: "Mar 2025 – Apr 2025",
+    icon: <Code2 className="h-6 w-6" aria-hidden />,
+    url: "https://frontendmasters.com",
+    color: "bg-blue-500/10 text-blue-500",
+  },
+];
+
+export const Learning = () => {
   return (
     <div className="w-full px-4 sm:px-8 md:px-16 lg:px-24">
-      <h2 className="text-3xl font-bold mb-8 text-foreground">
-        Current Learning
-      </h2>
+      <h2 className="text-3xl font-bold mb-8 text-foreground">Courses</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {courses.map((course, index) => (
+        {courses.map((course) => (
           <Link
-            key={index}
+            key={course.title}
             href={course.url}
             target="_blank"
+            rel="noopener noreferrer"
             className="block h-full"
+            aria-label={`${course.title} at ${course.institution} (opens in new tab)`}
           >
             <GlowingCard className="group relative overflow-hidden p-6 hover:border-foreground/50 transition-colors h-full">
               <div className="flex items-start gap-4 h-full">
@@ -62,7 +64,7 @@ export function Learning() {
                     {course.title}
                   </h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {course.description}
+                    {course.institution} · {course.duration}
                   </p>
                 </div>
               </div>
@@ -72,4 +74,4 @@ export function Learning() {
       </div>
     </div>
   );
-}
+};

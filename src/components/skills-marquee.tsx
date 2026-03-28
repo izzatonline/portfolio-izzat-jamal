@@ -6,6 +6,7 @@ const skills = [
   "HTML",
   "CSS",
   "JavaScript",
+  "JavaScript (ES6+)",
   "TypeScript",
   "React",
   "Next.js",
@@ -29,6 +30,17 @@ const skills = [
   "Python",
   "Go",
   "Styled Components",
+  "Module Federation",
+  "Webpack",
+  "Micro-frontend Architecture",
+  "Design Systems",
+  "Component Libraries",
+  "CSS Architecture",
+  "Third-party Integrations",
+  "Analytics Integration",
+  "Performance Optimization",
+  "GitLab CI/CD",
+  "Mentoring & Technical Teaching",
 ];
 
 export function SkillsMarquee() {

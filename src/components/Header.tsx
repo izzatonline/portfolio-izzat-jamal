@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Github, Linkedin } from "lucide-react";
+import { Github, Globe, Linkedin } from "lucide-react";
 import { toast } from "sonner";
 import { ModeToggle } from "@/components/mode-toggle";
 
@@ -25,20 +25,31 @@ export default function Header() {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-4">
             <Link
+              href="https://izzatjamal.com"
+              className="hover:opacity-70 transition-opacity"
+              target="_blank"
+              aria-label="Personal website"
+            >
+              <span className="hidden sm:inline">Website</span>
+              <Globe className="h-5 w-5 sm:hidden" aria-hidden />
+            </Link>
+            <Link
               href="https://www.linkedin.com/in/izzatjamalullail"
               className="hover:opacity-70 transition-opacity"
               target="_blank"
+              aria-label="LinkedIn profile"
             >
               <span className="hidden sm:inline">LinkedIn</span>
-              <Linkedin className="h-5 w-5 sm:hidden" />
+              <Linkedin className="h-5 w-5 sm:hidden" aria-hidden />
             </Link>
             <Link
               href="https://github.com/izzatonline"
               className="hover:opacity-70 transition-opacity"
               target="_blank"
+              aria-label="GitHub profile"
             >
               <span className="hidden sm:inline">Github</span>
-              <Github className="h-5 w-5 sm:hidden" />
+              <Github className="h-5 w-5 sm:hidden" aria-hidden />
             </Link>
             <ModeToggle />
           </div>

@@ -16,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Izzat Jamal",
-  description: "Izzat Jamal - Full-Stack Developer",
+  description:
+    "Senior Frontend Engineer at Xsolla. Design systems, React, TypeScript, micro-frontends, and CMS-driven platforms. Kuala Lumpur, Malaysia.",
   icons: {
     icon: [
       {

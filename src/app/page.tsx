@@ -69,7 +69,7 @@ export default function Home() {
         {/* Footer */}
         <footer className="w-full px-4 sm:px-8 md:px-16 lg:px-24 py-8 text-sm text-muted-foreground">
           <div className="flex justify-between items-center">
-            <p>© 2025 All rights reserved.</p>
+            <p>© 2026 All rights reserved.</p>
             <div className="flex gap-4">
               <Link
                 href="https://www.linkedin.com/in/izzatjamalullail"
