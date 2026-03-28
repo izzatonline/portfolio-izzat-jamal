@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Image from "next/image";
 import Link from "next/link";
-import { SkillsMarquee } from "@/components/skills-marquee";
+import { SkillsSection } from "@/components/skills-section";
 import { Projects } from "@/components/projects";
 import { Hero } from "@/components/hero";
 import { Learning } from "@/components/learning";
@@ -21,7 +21,7 @@ export default function Home() {
           <Hero />
 
           {/* Skills Section */}
-          <SkillsMarquee />
+          <SkillsSection />
 
           {/* Projects Section */}
           <div id="projects">
