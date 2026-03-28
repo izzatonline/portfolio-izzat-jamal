@@ -75,6 +75,22 @@ export function Projects() {
             liveUrl="https://simpleresume.xyz/"
           />
           <ProjectCard
+            title="SettleHere"
+            description="Malaysia home planner: compare a candidate address with commute times to multiple stops, nearby place search (schools, services, and more), routes on the map, and a location score across categories within 5 km."
+            image="/images/settlehere.png"
+            techStack={[
+              "React",
+              "TypeScript",
+              "Vite",
+              "Tailwind CSS",
+              "Google Maps",
+              "TanStack Query",
+              "Zustand",
+              "dnd-kit",
+            ]}
+            liveUrl="https://settlehere.my"
+          />
+          <ProjectCard
             title="Quranslide"
             description="Quran slides generator for teachers and preachers"
             image="/images/quran-slide.png"
