@@ -1,0 +1,23 @@
+<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="760" fill="#0F172A"/>
+  <rect x="74" y="68" width="1052" height="624" rx="40" fill="#111827"/>
+  <rect x="124" y="118" width="952" height="524" rx="28" fill="#020617"/>
+  <rect x="172" y="160" width="258" height="430" rx="22" fill="#0F172A" stroke="#1E293B" stroke-width="2"/>
+  <rect x="472" y="160" width="556" height="198" rx="22" fill="#0F172A" stroke="#1E293B" stroke-width="2"/>
+  <rect x="472" y="392" width="556" height="198" rx="22" fill="#0F172A" stroke="#1E293B" stroke-width="2"/>
+  <circle cx="301" cy="284" r="76" fill="#84CC16"/>
+  <circle cx="276" cy="268" r="12" fill="#020617"/>
+  <circle cx="326" cy="268" r="12" fill="#020617"/>
+  <path d="M270 311C290 330 315 330 334 311" stroke="#020617" stroke-width="12" stroke-linecap="round"/>
+  <path d="M532 306L628 248L724 280L834 210L970 258" stroke="#22C55E" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="628" cy="248" r="14" fill="#A3E635"/>
+  <circle cx="724" cy="280" r="14" fill="#A3E635"/>
+  <circle cx="834" cy="210" r="14" fill="#A3E635"/>
+  <rect x="532" y="442" width="128" height="32" rx="16" fill="#1E293B"/>
+  <rect x="532" y="500" width="424" height="18" rx="9" fill="#334155"/>
+  <rect x="532" y="536" width="344" height="18" rx="9" fill="#1E293B"/>
+  <rect x="688" y="442" width="112" height="32" rx="16" fill="#365314"/>
+  <rect x="826" y="442" width="132" height="32" rx="16" fill="#164E63"/>
+  <text x="301" y="475" text-anchor="middle" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700">InspectorGecko</text>
+  <text x="301" y="520" text-anchor="middle" fill="#94A3B8" font-family="Arial, Helvetica, sans-serif" font-size="24">market intelligence</text>
+</svg>

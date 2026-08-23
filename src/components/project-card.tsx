@@ -90,6 +90,11 @@ export function ProjectCard({
               src={image}
               alt={title}
               fill
+              sizes={
+                isWork
+                  ? "(min-width: 1024px) 50vw, 100vw"
+                  : "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+              }
               className="object-cover rounded-t-lg"
             />
           </div>

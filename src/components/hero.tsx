@@ -54,16 +54,13 @@ export function Hero() {
           </p>
 
           <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
-            Senior Frontend Engineer at Xsolla with 2+ years of experience
-            building scalable, high-impact web systems using React and
-            TypeScript. Technical owner of a company-wide design system used
-            across multiple products, enabling faster delivery of consistent and
-            accessible user experiences. Experienced in platform-level frontend
-            development, CMS-driven content systems, third-party integrations,
-            and performance optimization. Comfortable working across frontend and
-            backend boundaries and collaborating closely with product, design,
-            and marketing stakeholders. Actively mentors engineers and teaches
-            frontend fundamentals through Xsolla School.
+            Senior-level Frontend Engineer specializing in scalable web and
+            mobile platforms built with TypeScript, React, Next.js, and React
+            Native. At Xsolla, I lead the Business Accounts platform SDK used
+            by approximately 25 account apps, setting architecture direction
+            across shared packages, Module Federation infrastructure, developer
+            tooling, AI-assisted migration workflows, product analytics,
+            observability, and cross-platform design systems.
           </p>
 
           <Button

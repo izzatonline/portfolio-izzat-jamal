@@ -40,16 +40,12 @@ export function GlowingCard({
       onMouseLeave={() => setIsHovered(false)}
       {...props}
     >
-      {/* Glowing effect */}
-      <motion.div
+      <div
         className="pointer-events-none absolute -inset-px z-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        animate={{
+        style={{
           background: isHovered
             ? `radial-gradient(400px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(255, 255, 255, 0.1), transparent 40%)`
-            : "transparent",
-        }}
-        transition={{
-          duration: 0.1,
+            : "rgba(0, 0, 0, 0)",
         }}
       />
 
