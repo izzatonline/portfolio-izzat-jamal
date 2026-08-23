@@ -9,6 +9,8 @@ import { Projects } from "@/components/projects";
 import { Hero } from "@/components/hero";
 import { Learning } from "@/components/learning";
 import { ThreeBackground } from "@/components/three-background";
+import { FreelanceRates } from "@/components/freelance-rates";
+import { Experience } from "@/components/experience";
 
 export default function Home() {
   return (
@@ -23,6 +25,8 @@ export default function Home() {
           {/* Skills Section */}
           <SkillsSection />
 
+          <Experience />
+
           {/* Projects Section */}
           <div id="projects">
             <Projects />
@@ -32,6 +36,8 @@ export default function Home() {
           <div id="learning">
             <Learning />
           </div>
+
+          <FreelanceRates />
 
           {/* Contact Section */}
           <div className="w-full px-4 sm:px-8 md:px-16 lg:px-24 pb-32">
