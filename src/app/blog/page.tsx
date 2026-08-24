@@ -6,7 +6,7 @@ import { formatPostDate, getAllBlogPosts } from "@/lib/blog";
 export const metadata = {
   title: "Blog | Izzat Jamal",
   description:
-    "Notes on frontend platform engineering, product systems, and building software teams can actually maintain.",
+    "Notes on software systems, product engineering, developer tooling, and building things teams can actually maintain.",
 };
 
 export default function BlogPage() {
@@ -23,11 +23,12 @@ export default function BlogPage() {
               Blog
             </p>
             <h1 className="text-4xl font-bold tracking-normal text-foreground sm:text-5xl">
-              Writing about frontend platform work
+              Writing about software that teams can maintain
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground">
-              Practical notes from building shared frontend systems, design
-              systems, developer tooling, and product platforms.
+              Practical notes on frontend and backend systems, design systems,
+              developer tooling, product platforms, and the engineering tradeoffs
+              behind them.
             </p>
           </section>
 

@@ -1,7 +1,7 @@
 import { BlogPostLayout } from "@/components/blog-post-layout";
 import { getBlogPost } from "@/lib/blog";
 
-const post = getBlogPost("stop-ai-syncing-the-starter");
+const post = getBlogPost("one-design-system-every-product");
 
 export const metadata = {
   title: `${post.title} | Izzat Jamal`,
