@@ -25,14 +25,20 @@ export default function Header() {
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-4">
             <Link
-              href="#rates"
+              href="/blog"
+              className="hover:opacity-70 transition-opacity"
+            >
+              Blog
+            </Link>
+            <Link
+              href="/#rates"
               className="hover:opacity-70 transition-opacity"
               aria-label="Freelance rates"
             >
               Rates
             </Link>
             <Link
-              href="#experience"
+              href="/#experience"
               className="hidden sm:inline hover:opacity-70 transition-opacity"
             >
               Experience
