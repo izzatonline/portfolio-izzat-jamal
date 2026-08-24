@@ -167,6 +167,10 @@ export function MarkdownContent({ content }: { content: string }) {
 
       i += 1;
 
+      if (language === "mermaid") {
+        continue;
+      }
+
       blocks.push(
         <figure
           key={`code-${i}`}
