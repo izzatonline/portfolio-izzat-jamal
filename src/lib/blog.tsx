@@ -146,12 +146,39 @@ export function MarkdownContent({ content }: { content: string }) {
       blocks.push(
         <h2
           key={`h2-${i}`}
-          className="mt-12 scroll-mt-28 text-2xl font-bold tracking-normal text-foreground"
+          className="mb-5 mt-16 scroll-mt-28 text-3xl font-bold tracking-normal text-foreground first:mt-0"
         >
           {renderInline(line.slice(3))}
         </h2>
       );
       i += 1;
+      continue;
+    }
+
+    if (line.startsWith("```")) {
+      const language = line.slice(3).trim();
+      const codeLines: string[] = [];
+      i += 1;
+
+      while (i < lines.length && !lines[i].trim().startsWith("```")) {
+        codeLines.push(lines[i]);
+        i += 1;
+      }
+
+      i += 1;
+
+      blocks.push(
+        <figure key={`code-${i}`} className="my-12">
+          {language ? (
+            <figcaption className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              {language === "mermaid" ? "Diagram" : language}
+            </figcaption>
+          ) : null}
+          <pre className="overflow-x-auto rounded-lg border bg-muted/60 p-5 text-xs leading-6 text-foreground sm:p-6 sm:text-sm">
+            <code>{codeLines.join("\n")}</code>
+          </pre>
+        </figure>
+      );
       continue;
     }
 
@@ -165,7 +192,7 @@ export function MarkdownContent({ content }: { content: string }) {
       blocks.push(
         <ul
           key={`ul-${i}`}
-          className="my-6 list-disc space-y-2 pl-6 text-muted-foreground"
+          className="my-8 list-disc space-y-3 pl-6 leading-8 text-muted-foreground"
         >
           {items.map((item, index) => (
             <li key={`${item}-${index}`}>{renderInline(item)}</li>
@@ -185,7 +212,7 @@ export function MarkdownContent({ content }: { content: string }) {
       blocks.push(
         <ol
           key={`ol-${i}`}
-          className="my-6 list-decimal space-y-2 pl-6 text-muted-foreground"
+          className="my-8 list-decimal space-y-3 pl-6 leading-8 text-muted-foreground"
         >
           {items.map((item, index) => (
             <li key={`${item}-${index}`}>{renderInline(item)}</li>
@@ -210,11 +237,14 @@ export function MarkdownContent({ content }: { content: string }) {
     }
 
     blocks.push(
-      <p key={`p-${i}`} className="my-6 leading-8 text-muted-foreground">
+      <p
+        key={`p-${i}`}
+        className="my-7 leading-9 text-muted-foreground first:mt-0"
+      >
         {renderInline(paragraphLines.join(" "))}
       </p>
     );
   }
 
-  return <div>{blocks}</div>;
+  return <div className="text-lg">{blocks}</div>;
 }
