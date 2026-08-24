@@ -168,10 +168,13 @@ export function MarkdownContent({ content }: { content: string }) {
       i += 1;
 
       blocks.push(
-        <figure key={`code-${i}`} className="my-12">
-          {language ? (
+        <figure
+          key={`code-${i}`}
+          className="my-14 [&+figure]:mt-20 [&+h2]:mt-20 [&+p]:mt-12"
+        >
+          {language && language !== "mermaid" ? (
             <figcaption className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              {language === "mermaid" ? "Diagram" : language}
+              {language}
             </figcaption>
           ) : null}
           <pre className="overflow-x-auto rounded-lg border bg-muted/60 p-5 text-xs leading-6 text-foreground sm:p-6 sm:text-sm">
