@@ -2,6 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import type { ReactNode } from "react";
 
+import { CodeBlock } from "@/components/code-block";
+
 export type BlogPost = {
   slug: string;
   title: string;
@@ -10,7 +12,22 @@ export type BlogPost = {
   content: string;
 };
 
+export type BlogHeading = {
+  id: string;
+  text: string;
+  level: 2 | 3;
+};
+
 const blogDirectory = path.join(process.cwd(), "src/content/blog");
+
+function slugifyHeading(text: string) {
+  return text
+    .replace(/[`*_]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+}
 
 function parseFrontmatter(source: string) {
   const match = source.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
@@ -74,6 +91,22 @@ export function formatPostDate(date: string) {
   }).format(new Date(`${date}T00:00:00`));
 }
 
+export function getPostHeadings(content: string): BlogHeading[] {
+  return content
+    .split("\n")
+    .filter((line) => line.startsWith("## ") || line.startsWith("### "))
+    .map((line) => {
+      const level = line.startsWith("### ") ? 3 : 2;
+      const text = line.replace(/^#{2,3}\s/, "");
+
+      return {
+        id: slugifyHeading(text),
+        text: text.replace(/[`*_]/g, ""),
+        level,
+      };
+    });
+}
+
 function renderInline(text: string): ReactNode[] {
   const nodes: ReactNode[] = [];
   const tokenPattern =
@@ -90,12 +123,12 @@ function renderInline(text: string): ReactNode[] {
     const key = `${match.index}-${token}`;
 
     if (token.startsWith("**")) {
-      nodes.push(<strong key={key}>{token.slice(2, -2)}</strong>);
+      nodes.push(<strong key={key}>{renderInline(token.slice(2, -2))}</strong>);
     } else if (token.startsWith("`")) {
       nodes.push(
         <code
           key={key}
-          className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.9em] text-foreground"
+          className="break-words rounded bg-muted px-1.5 py-0.5 font-mono text-[0.9em] text-foreground"
         >
           {token.slice(1, -1)}
         </code>
@@ -116,7 +149,7 @@ function renderInline(text: string): ReactNode[] {
         );
       }
     } else if (token.startsWith("*")) {
-      nodes.push(<em key={key}>{token.slice(1, -1)}</em>);
+      nodes.push(<em key={key}>{renderInline(token.slice(1, -1))}</em>);
     }
 
     lastIndex = match.index + token.length;
@@ -142,13 +175,30 @@ export function MarkdownContent({ content }: { content: string }) {
       continue;
     }
 
+    if (line.startsWith("### ")) {
+      const headingText = line.slice(4);
+      blocks.push(
+        <h3
+          key={`h3-${i}`}
+          id={slugifyHeading(headingText)}
+          className="mb-4 mt-12 scroll-mt-28 text-2xl font-semibold tracking-normal text-foreground"
+        >
+          {renderInline(headingText)}
+        </h3>
+      );
+      i += 1;
+      continue;
+    }
+
     if (line.startsWith("## ")) {
+      const headingText = line.slice(3);
       blocks.push(
         <h2
           key={`h2-${i}`}
+          id={slugifyHeading(headingText)}
           className="mb-5 mt-16 scroll-mt-28 text-3xl font-bold tracking-normal text-foreground first:mt-0"
         >
-          {renderInline(line.slice(3))}
+          {renderInline(headingText)}
         </h2>
       );
       i += 1;
@@ -174,16 +224,9 @@ export function MarkdownContent({ content }: { content: string }) {
       blocks.push(
         <figure
           key={`code-${i}`}
-          className="my-14 [&+figure]:mt-20 [&+h2]:mt-20 [&+p]:mt-12"
+          className="my-14 w-full min-w-0 max-w-full [&+figure]:mt-20 [&+h2]:mt-20 [&+p]:mt-12"
         >
-          {language && language !== "mermaid" ? (
-            <figcaption className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              {language}
-            </figcaption>
-          ) : null}
-          <pre className="overflow-x-auto rounded-lg border bg-muted/60 p-5 text-xs leading-6 text-foreground sm:p-6 sm:text-sm">
-            <code>{codeLines.join("\n")}</code>
-          </pre>
+          <CodeBlock code={codeLines.join("\n")} language={language} />
         </figure>
       );
       continue;
@@ -236,6 +279,7 @@ export function MarkdownContent({ content }: { content: string }) {
       i < lines.length &&
       lines[i].trim() &&
       !lines[i].trim().startsWith("## ") &&
+      !lines[i].trim().startsWith("### ") &&
       !lines[i].trim().startsWith("- ") &&
       !/^\d+\.\s/.test(lines[i].trim())
     ) {

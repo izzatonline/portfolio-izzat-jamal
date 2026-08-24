@@ -1,9 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { Github, Linkedin } from "lucide-react";
+import {
+  BadgeDollarSign,
+  BriefcaseBusiness,
+  Github,
+  Linkedin,
+  Menu,
+  Newspaper,
+} from "lucide-react";
 import { toast } from "sonner";
 import { ModeToggle } from "@/components/mode-toggle";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Header() {
   const copyEmail = async () => {
@@ -11,58 +25,98 @@ export default function Header() {
     toast.success("Email copied to clipboard!");
   };
 
+  const navItems = [
+    {
+      href: "/blog",
+      label: "Blog",
+      icon: Newspaper,
+    },
+    {
+      href: "/#rates",
+      label: "Rates",
+      icon: BadgeDollarSign,
+    },
+    {
+      href: "/#experience",
+      label: "Experience",
+      icon: BriefcaseBusiness,
+    },
+    {
+      href: "https://www.linkedin.com/in/izzatjamalullail",
+      label: "LinkedIn",
+      icon: Linkedin,
+      external: true,
+    },
+    {
+      href: "https://github.com/izzatonline",
+      label: "GitHub",
+      icon: Github,
+      external: true,
+    },
+  ];
+
   return (
-    <header className="fixed top-0 w-full p-4 backdrop-blur-sm z-50">
-      <div className="w-full px-4 sm:px-8 md:px-16 lg:px-24 flex items-center justify-between">
-        <div>
+    <header className="fixed top-0 z-50 w-full p-4 backdrop-blur-sm">
+      <div className="flex w-full items-center justify-between gap-3 px-4 sm:px-8 md:px-16 lg:px-24">
+        <div className="min-w-0">
           <button
             onClick={copyEmail}
-            className="text-sm hover:opacity-70 transition-opacity"
+            className="block max-w-[62vw] truncate text-sm transition-opacity hover:opacity-70 sm:max-w-[18rem] lg:max-w-none"
           >
-            <span className="sm:inline">izzat.online@gmail.com</span>
+            izzat.online@gmail.com
           </button>
         </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-4">
-            <Link
-              href="/blog"
-              className="hover:opacity-70 transition-opacity"
-            >
-              Blog
-            </Link>
-            <Link
-              href="/#rates"
-              className="hover:opacity-70 transition-opacity"
-              aria-label="Freelance rates"
-            >
-              Rates
-            </Link>
-            <Link
-              href="/#experience"
-              className="hidden sm:inline hover:opacity-70 transition-opacity"
-            >
-              Experience
-            </Link>
-            <Link
-              href="https://www.linkedin.com/in/izzatjamalullail"
-              className="hover:opacity-70 transition-opacity"
-              target="_blank"
-              aria-label="LinkedIn profile"
-            >
-              <span className="hidden sm:inline">LinkedIn</span>
-              <Linkedin className="h-5 w-5 sm:hidden" aria-hidden />
-            </Link>
-            <Link
-              href="https://github.com/izzatonline"
-              className="hover:opacity-70 transition-opacity"
-              target="_blank"
-              aria-label="GitHub profile"
-            >
-              <span className="hidden sm:inline">Github</span>
-              <Github className="h-5 w-5 sm:hidden" aria-hidden />
-            </Link>
-            <ModeToggle />
+
+        <div className="flex shrink-0 items-center gap-2">
+          <nav className="hidden items-center gap-1 md:flex xl:gap-4">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground xl:h-auto xl:w-auto xl:hover:bg-transparent xl:hover:opacity-70"
+                  target={item.external ? "_blank" : undefined}
+                  rel={item.external ? "noopener noreferrer" : undefined}
+                  aria-label={item.label}
+                >
+                  <Icon className="h-5 w-5 xl:hidden" aria-hidden />
+                  <span className="hidden xl:inline">{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Open menu">
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+
+                  return (
+                    <DropdownMenuItem key={item.href} asChild>
+                      <Link
+                        href={item.href}
+                        target={item.external ? "_blank" : undefined}
+                        rel={item.external ? "noopener noreferrer" : undefined}
+                      >
+                        <Icon className="h-4 w-4" aria-hidden />
+                        {item.label}
+                      </Link>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
+
+          <ModeToggle />
         </div>
       </div>
     </header>
