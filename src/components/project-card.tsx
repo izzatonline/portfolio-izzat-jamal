@@ -1,9 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Github, ExternalLink, ChevronDown, ChevronUp } from "lucide-react";
+import { createPortal } from "react-dom";
+import {
+  Github,
+  ExternalLink,
+  ChevronDown,
+  ChevronUp,
+  Maximize2,
+  X,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GlowingCard } from "@/components/ui/glowing-card";
 
@@ -33,6 +41,30 @@ export function ProjectCard({
   details,
 }: ProjectCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isImageOpen, setIsImageOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isImageOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsImageOpen(false);
+      }
+    };
+
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isImageOpen]);
 
   const DetailsContent = () => (
     <div className="space-y-4">
@@ -67,6 +99,48 @@ export function ProjectCard({
     </div>
   );
 
+  const ImagePreview = (
+    <AnimatePresence>
+      {isImageOpen && (
+        <motion.div
+          className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          role="dialog"
+          aria-modal="true"
+          aria-label={`${title} image preview`}
+          onClick={() => setIsImageOpen(false)}
+        >
+          <motion.div
+            className="relative h-[86vh] w-full max-w-6xl overflow-hidden rounded-lg bg-background shadow-2xl"
+            initial={{ scale: 0.96, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.96, opacity: 0 }}
+            transition={{ duration: 0.16 }}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <Image
+              src={image}
+              alt={title}
+              fill
+              sizes="100vw"
+              className="object-contain"
+            />
+            <button
+              type="button"
+              onClick={() => setIsImageOpen(false)}
+              className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-background/90 text-foreground shadow-sm transition-colors hover:bg-background"
+              aria-label="Close image preview"
+            >
+              <X className="h-5 w-5" aria-hidden />
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
   return (
     <GlowingCard
       className={`
@@ -83,8 +157,13 @@ export function ProjectCard({
       >
         {/* Main Card Content */}
         <div className={`${isWork ? "lg:flex lg:flex-col" : ""}`}>
-          <div
-            className={`relative h-48 ${isWork ? "lg:flex-1 lg:h-auto" : ""}`}
+          <button
+            type="button"
+            onClick={() => setIsImageOpen(true)}
+            className={`relative block h-48 w-full overflow-hidden text-left ${
+              isWork ? "lg:flex-1 lg:h-auto" : ""
+            }`}
+            aria-label={`View ${title} image`}
           >
             <Image
               src={image}
@@ -95,9 +174,13 @@ export function ProjectCard({
                   ? "(min-width: 1024px) 50vw, 100vw"
                   : "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
               }
-              className="object-cover rounded-t-lg"
+              className="object-cover rounded-t-lg transition-transform duration-300 hover:scale-[1.02]"
             />
-          </div>
+            <span className="absolute bottom-3 right-3 inline-flex items-center gap-2 rounded-full bg-black/70 px-3 py-1.5 text-xs font-medium text-white opacity-0 transition-opacity hover:bg-black/80 group-hover:opacity-100">
+              <Maximize2 className="h-3.5 w-3.5" aria-hidden />
+              View image
+            </span>
+          </button>
 
           <div className="p-6">
             <div className="flex justify-between items-start mb-3">
@@ -183,6 +266,7 @@ export function ProjectCard({
           </>
         )}
       </div>
+      {isMounted ? createPortal(ImagePreview, document.body) : null}
     </GlowingCard>
   );
 }

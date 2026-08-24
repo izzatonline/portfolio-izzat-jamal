@@ -134,7 +134,7 @@ export function Projects() {
           <ProjectCard
             title="Kiddoly"
             description="React Native and Expo caregiving app for families with special-needs children, including communication boards, mood tracking, potty logs, meal tracking, schedules, reminders, reports, household data, and premium feature gating."
-            image="/images/kiddoly.svg"
+            image="/images/kiddoly-collage.png"
             techStack={[
               "React Native",
               "Expo",
