@@ -13,7 +13,9 @@ import {
   X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { GlowingCard } from "@/components/ui/glowing-card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 interface ProjectCardProps {
   title: string;
@@ -71,14 +73,16 @@ export function ProjectCard({
       {details?.overview && (
         <div>
           <h4 className="font-medium mb-2">Overview</h4>
-          <p className="text-sm text-muted-foreground">{details.overview}</p>
+          <p className="text-sm leading-6 text-muted-foreground">
+            {details.overview}
+          </p>
         </div>
       )}
 
       {details?.responsibilities && (
         <div>
           <h4 className="font-medium mb-2">Key Responsibilities</h4>
-          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+          <ul className="list-inside list-disc space-y-1 text-sm leading-6 text-muted-foreground">
             {details.responsibilities.map((resp, index) => (
               <li key={index}>{resp}</li>
             ))}
@@ -89,7 +93,7 @@ export function ProjectCard({
       {details?.techDetails && (
         <div>
           <h4 className="font-medium mb-2">Tech Stack & Tools</h4>
-          <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+          <ul className="list-inside list-disc space-y-1 text-sm leading-6 text-muted-foreground">
             {details.techDetails.map((tech, index) => (
               <li key={index}>{tech}</li>
             ))}
@@ -142,11 +146,9 @@ export function ProjectCard({
   );
 
   return (
-    <GlowingCard
+    <Card
       className={`
-        hover:shadow-lg
-        dark:shadow-[0_0_15px_rgba(255,255,255,0.07)]
-        dark:hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]
+        group overflow-hidden bg-background/85 shadow-sm transition-colors hover:border-foreground/30 dark:border-border dark:bg-card dark:hover:border-muted-foreground/45
         ${isWork ? "lg:col-span-3" : ""}
       `}
     >
@@ -160,8 +162,8 @@ export function ProjectCard({
           <button
             type="button"
             onClick={() => setIsImageOpen(true)}
-            className={`relative block h-48 w-full overflow-hidden text-left ${
-              isWork ? "lg:flex-1 lg:h-auto" : ""
+            className={`relative block h-56 w-full overflow-hidden border-b bg-muted text-left dark:bg-muted/70 ${
+              isWork ? "lg:flex-1 lg:h-auto lg:min-h-[420px]" : ""
             }`}
             aria-label={`View ${title} image`}
           >
@@ -174,17 +176,24 @@ export function ProjectCard({
                   ? "(min-width: 1024px) 50vw, 100vw"
                   : "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
               }
-              className="object-cover rounded-t-lg transition-transform duration-300 hover:scale-[1.02]"
+              className="object-cover transition-transform duration-300 group-hover:scale-[1.015]"
             />
-            <span className="absolute bottom-3 right-3 inline-flex items-center gap-2 rounded-full bg-black/70 px-3 py-1.5 text-xs font-medium text-white opacity-0 transition-opacity hover:bg-black/80 group-hover:opacity-100">
+            <span className="absolute bottom-3 right-3 inline-flex items-center gap-2 rounded-md bg-background/90 px-3 py-1.5 text-xs font-medium text-foreground opacity-0 shadow-sm transition-opacity group-hover:opacity-100">
               <Maximize2 className="h-3.5 w-3.5" aria-hidden />
               View image
             </span>
           </button>
 
-          <div className="p-6">
-            <div className="flex justify-between items-start mb-3">
-              <h3 className="text-xl font-semibold text-foreground">{title}</h3>
+          <div className="p-5 sm:p-6">
+            <div className="mb-3 flex items-start justify-between gap-4">
+              <div>
+                <Badge variant={isWork ? "default" : "secondary"}>
+                  {isWork ? "Work" : "Project"}
+                </Badge>
+                <h3 className="mt-3 text-xl font-semibold leading-tight text-foreground">
+                  {title}
+                </h3>
+              </div>
               <div className="flex gap-2">
                 {githubUrl && (
                   <Link
@@ -207,24 +216,25 @@ export function ProjectCard({
               </div>
             </div>
 
-            <p className="text-muted-foreground mb-4">{description}</p>
+            <p className="mb-5 text-sm leading-7 text-muted-foreground sm:text-base">
+              {description}
+            </p>
 
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="mb-5 flex flex-wrap gap-2">
               {techStack.map((tech, index) => (
-                <span
-                  key={index}
-                  className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm"
-                >
+                <Badge key={index} variant="secondary">
                   {tech}
-                </span>
+                </Badge>
               ))}
             </div>
 
             {/* Mobile Expand Button */}
             {details && (
-              <button
+              <Button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="lg:hidden flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+                className="lg:hidden"
+                variant="outline"
+                size="sm"
               >
                 {isExpanded ? "Show less" : "Show more"}
                 {isExpanded ? (
@@ -232,7 +242,7 @@ export function ProjectCard({
                 ) : (
                   <ChevronDown className="h-4 w-4" />
                 )}
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -260,13 +270,13 @@ export function ProjectCard({
             </AnimatePresence>
 
             {/* Desktop Details (Always Visible) */}
-            <div className="hidden lg:block p-6">
+            <div className="hidden border-l p-6 lg:block">
               <DetailsContent />
             </div>
           </>
         )}
       </div>
       {isMounted ? createPortal(ImagePreview, document.body) : null}
-    </GlowingCard>
+    </Card>
   );
 }

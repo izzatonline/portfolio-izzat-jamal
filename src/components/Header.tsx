@@ -9,7 +9,6 @@ import {
   Menu,
   Newspaper,
 } from "lucide-react";
-import { toast } from "sonner";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,11 +19,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function Header() {
-  const copyEmail = async () => {
-    await navigator.clipboard.writeText("izzat.online@gmail.com");
-    toast.success("Email copied to clipboard!");
-  };
-
   const navItems = [
     {
       href: "/blog",
@@ -59,12 +53,18 @@ export default function Header() {
     <header className="fixed top-0 z-50 w-full p-4 backdrop-blur-sm">
       <div className="flex w-full items-center justify-between gap-3 px-4 sm:px-8 md:px-16 lg:px-24">
         <div className="min-w-0">
-          <button
-            onClick={copyEmail}
-            className="block max-w-[62vw] truncate text-sm transition-opacity hover:opacity-70 sm:max-w-[18rem] lg:max-w-none"
+          <Link
+            href="/"
+            className="inline-flex min-w-0 items-center gap-3 rounded-md transition-opacity hover:opacity-75"
+            aria-label="Go to homepage"
           >
-            izzat.online@gmail.com
-          </button>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary font-semibold tracking-normal text-primary-foreground">
+              IJ
+            </span>
+            <span className="truncate text-sm font-medium text-foreground sm:text-base">
+              Izzat Jamal
+            </span>
+          </Link>
         </div>
 
         <div className="flex shrink-0 items-center gap-2">

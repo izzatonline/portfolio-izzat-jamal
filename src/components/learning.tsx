@@ -2,7 +2,7 @@
 
 import { BookOpen, Code2, GraduationCap } from "lucide-react";
 import Link from "next/link";
-import { GlowingCard } from "@/components/ui/glowing-card";
+import { Card, CardContent } from "@/components/ui/card";
 
 type CourseItem = {
   title: string;
@@ -42,9 +42,17 @@ const courses: CourseItem[] = [
 
 export const Learning = () => {
   return (
-    <div className="w-full px-4 sm:px-8 md:px-16 lg:px-24">
-      <h2 className="text-3xl font-bold mb-8 text-foreground">Courses</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <section className="w-full px-4 sm:px-8 md:px-16 lg:px-24">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8 max-w-3xl">
+          <p className="mb-3 text-sm font-medium text-muted-foreground">
+            Learning
+          </p>
+          <h2 className="text-3xl font-bold tracking-normal text-foreground sm:text-4xl">
+            Courses and continuing practice
+          </h2>
+        </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {courses.map((course) => (
           <Link
             key={course.title}
@@ -54,8 +62,8 @@ export const Learning = () => {
             className="block h-full"
             aria-label={`${course.title} at ${course.institution} (opens in new tab)`}
           >
-            <GlowingCard className="group relative overflow-hidden p-6 hover:border-foreground/50 transition-colors h-full">
-              <div className="flex items-start gap-4 h-full">
+            <Card className="h-full bg-background/85 shadow-sm transition-colors hover:border-foreground/30 dark:border-border dark:bg-card dark:hover:border-muted-foreground/45">
+              <CardContent className="flex h-full items-start gap-4 p-5">
                 <div className={`rounded-lg p-2 ${course.color} shrink-0`}>
                   {course.icon}
                 </div>
@@ -67,11 +75,12 @@ export const Learning = () => {
                     {course.institution} · {course.duration}
                   </p>
                 </div>
-              </div>
-            </GlowingCard>
+              </CardContent>
+            </Card>
           </Link>
         ))}
       </div>
-    </div>
+      </div>
+    </section>
   );
 };

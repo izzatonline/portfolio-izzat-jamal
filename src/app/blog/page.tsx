@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Header from "@/components/Header";
 import { ThreeBackground } from "@/components/three-background";
+import { Button } from "@/components/ui/button";
 import { formatPostDate, getAllBlogPosts } from "@/lib/blog";
 
 export const metadata = {
@@ -19,6 +20,9 @@ export default function BlogPage() {
         <Header />
         <main className="mx-auto flex w-full max-w-5xl flex-col gap-10 px-4 pb-24 pt-32 sm:px-8">
           <section>
+            <Button asChild variant="ghost" size="sm" className="-ml-2 mb-8">
+              <Link href="/">Back to home</Link>
+            </Button>
             <p className="mb-3 text-sm font-medium text-muted-foreground">
               Blog
             </p>

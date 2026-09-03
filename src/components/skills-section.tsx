@@ -1,3 +1,6 @@
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+
 type SkillCategory = {
   title: string;
   description: string;
@@ -107,39 +110,51 @@ export const SkillsSection = () => {
       className="w-full px-4 sm:px-8 md:px-16 lg:px-24"
       aria-labelledby="skills-heading"
     >
-      <h2
-        id="skills-heading"
-        className="text-3xl font-bold mb-8 text-foreground"
-      >
-        Skills
-      </h2>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {skillCategories.map((category) => (
-          <div
-            key={category.title}
-            className="rounded-xl border border-border/60 bg-muted/20 p-6 shadow-sm"
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8 max-w-3xl">
+          <p className="mb-3 text-sm font-medium text-muted-foreground">
+            Toolbox
+          </p>
+          <h2
+            id="skills-heading"
+            className="text-3xl font-bold tracking-normal text-foreground sm:text-4xl"
           >
-            <h3 className="text-lg font-semibold text-foreground mb-1">
-              {category.title}
-            </h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              {category.description}
-            </p>
-            <ul
-              className="flex flex-wrap gap-2 list-none p-0 m-0"
-              aria-label={`${category.title} skills`}
+            The stack I reach for when the system needs to last
+          </h2>
+          <p className="mt-4 text-base leading-7 text-muted-foreground">
+            I pick boring, proven tools for production systems, and sharper
+            platform tooling when teams need to move faster without creating
+            drift.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {skillCategories.map((category) => (
+            <Card
+              key={category.title}
+              className="bg-background/85 shadow-sm transition-colors hover:border-foreground/30 dark:border-border dark:bg-card dark:hover:border-muted-foreground/45"
             >
-              {category.skills.map((skill) => (
-                <li key={skill}>
-                  <span className="inline-block px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm">
-                    {skill}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold text-foreground">
+                  {category.title}
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  {category.description}
+                </p>
+                <ul
+                  className="mt-5 flex list-none flex-wrap gap-2 p-0"
+                  aria-label={`${category.title} skills`}
+                >
+                  {category.skills.map((skill) => (
+                    <li key={skill}>
+                      <Badge variant="secondary">{skill}</Badge>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     </section>
   );
