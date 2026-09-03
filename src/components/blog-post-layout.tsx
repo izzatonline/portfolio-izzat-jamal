@@ -30,12 +30,17 @@ export function BlogPostLayout({ post }: { post: BlogPost }) {
         <Header />
         <main className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-10 px-4 pb-24 pt-28 sm:px-8 lg:grid-cols-[minmax(0,1fr)_15rem] lg:pt-32">
           <article className="min-w-0">
-            <Button asChild variant="ghost" size="sm" className="-ml-2 mb-8">
-              <Link href="/blog">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to blog
-              </Link>
-            </Button>
+            <div className="-ml-2 mb-8 flex flex-wrap items-center gap-2">
+              <Button asChild variant="ghost" size="sm">
+                <Link href="/blog">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to blog
+                </Link>
+              </Button>
+              <Button asChild variant="ghost" size="sm">
+                <Link href="/">Home</Link>
+              </Button>
+            </div>
 
             <Card className="min-w-0 overflow-hidden border-border/70 bg-background/90 shadow-sm backdrop-blur">
               <CardHeader className="space-y-5 p-5 sm:p-8 lg:p-10">

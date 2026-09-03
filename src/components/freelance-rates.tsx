@@ -1,4 +1,6 @@
 import { BadgeDollarSign, CheckCircle2, Clock3, Handshake } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 
 const packages = [
   {
@@ -56,13 +58,13 @@ export function FreelanceRates() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
-            <p className="mb-3 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground">
+            <Badge variant="outline" className="mb-4 gap-2">
               <BadgeDollarSign className="h-4 w-4" aria-hidden />
               Freelance rate card
-            </p>
+            </Badge>
             <h2
               id="rates-heading"
-              className="text-3xl font-bold tracking-normal text-foreground"
+              className="text-3xl font-bold tracking-normal text-foreground sm:text-4xl"
             >
               Clear starting rates for web projects
             </h2>
@@ -74,25 +76,28 @@ export function FreelanceRates() {
             </p>
           </div>
 
-          <div className="rounded-lg border bg-background/80 p-4 text-sm text-muted-foreground shadow-sm backdrop-blur">
+          <Card className="bg-background/85 shadow-sm dark:border-border dark:bg-card">
+            <CardContent className="p-4 text-sm leading-6 text-muted-foreground">
             <div className="mb-2 flex items-center gap-2 font-medium text-foreground">
               <Clock3 className="h-4 w-4" aria-hidden />
               Typical timeline
             </div>
             <p>1 to 4 weeks depending on scope and feedback speed.</p>
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {packages.map((item) => (
-            <article
+            <Card
               key={item.name}
-              className={`rounded-lg border bg-background/85 p-6 shadow-sm backdrop-blur transition-colors ${
+              className={`bg-background/85 shadow-sm transition-colors dark:bg-card/95 ${
                 item.featured
-                  ? "border-foreground/30 ring-1 ring-foreground/10"
-                  : "border-border"
+                  ? "border-foreground/30 ring-1 ring-foreground/10 dark:border-primary/60 dark:ring-primary/10"
+                  : "border-border dark:border-border"
               }`}
             >
+              <CardContent className="p-6">
               <div className="mb-6 flex items-start justify-between gap-4">
                 <div>
                   <h3 className="text-xl font-semibold text-foreground">
@@ -103,9 +108,9 @@ export function FreelanceRates() {
                   </p>
                 </div>
                 {item.featured ? (
-                  <span className="rounded-full bg-foreground px-3 py-1 text-xs font-medium text-background">
+                  <Badge variant="default">
                     Popular
-                  </span>
+                  </Badge>
                 ) : null}
               </div>
 
@@ -113,7 +118,7 @@ export function FreelanceRates() {
                 {item.price}
               </p>
 
-              <ul className="space-y-3 text-sm text-muted-foreground">
+              <ul className="space-y-3 text-sm leading-6 text-muted-foreground">
                 {item.features.map((feature) => (
                   <li key={feature} className="flex gap-3">
                     <CheckCircle2
@@ -124,11 +129,13 @@ export function FreelanceRates() {
                   </li>
                 ))}
               </ul>
-            </article>
+              </CardContent>
+            </Card>
           ))}
         </div>
 
-        <div className="mt-6 grid grid-cols-1 gap-4 rounded-lg border bg-muted/60 p-5 text-sm text-muted-foreground md:grid-cols-3">
+        <Card className="mt-6 bg-muted/50 shadow-none dark:border-border dark:bg-muted/45">
+          <CardContent className="grid grid-cols-1 gap-4 p-5 text-sm leading-6 text-muted-foreground md:grid-cols-3">
           {notes.map((note) => (
             <div key={note} className="flex gap-3">
               <Handshake
@@ -138,7 +145,8 @@ export function FreelanceRates() {
               <span>{note}</span>
             </div>
           ))}
-        </div>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );

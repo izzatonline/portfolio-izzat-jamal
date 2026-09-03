@@ -2,11 +2,23 @@ import { ProjectCard } from "./project-card";
 
 export function Projects() {
   return (
-    <div className="w-full px-4 sm:px-8 md:px-16 lg:px-24">
+    <section className="w-full px-4 sm:px-8 md:px-16 lg:px-24">
       {/* Work Projects */}
-      <div className="mb-20">
-        <h2 className="text-3xl font-bold mb-8 text-foreground">Work</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="mx-auto mb-20 max-w-6xl">
+        <div className="mb-8 max-w-3xl">
+          <p className="mb-3 text-sm font-medium text-muted-foreground">
+            Selected work
+          </p>
+          <h2 className="text-3xl font-bold tracking-normal text-foreground sm:text-4xl">
+            Platform work across real production systems
+          </h2>
+          <p className="mt-4 text-base leading-7 text-muted-foreground">
+            The main work I want to be known for: shared account platforms,
+            cross-product UI architecture, design systems, and developer
+            tooling used by product teams.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <ProjectCard
             title="Xsolla - Business Accounts Platform & Shared SDK"
             description="Technical leadership and platform ownership for the Business Accounts SDK used by approximately 25 Xsolla account apps, covering shared packages, thin-host migrations, Module Federation, release trains, analytics, observability, and cross-platform design systems."
@@ -128,9 +140,20 @@ export function Projects() {
       </div>
 
       {/* Personal projects */}
-      <div>
-        <h2 className="text-3xl font-bold mb-8 text-foreground">Projects</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8 max-w-3xl">
+          <p className="mb-3 text-sm font-medium text-muted-foreground">
+            Independent builds
+          </p>
+          <h2 className="text-3xl font-bold tracking-normal text-foreground sm:text-4xl">
+            Products and experiments I shipped end to end
+          </h2>
+          <p className="mt-4 text-base leading-7 text-muted-foreground">
+            A mix of mobile apps, dashboards, productivity tools, and public
+            products where I owned the product shape, interface, and delivery.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
           <ProjectCard
             title="Kiddoly"
             description="React Native and Expo caregiving app for families with special-needs children, including communication boards, mood tracking, potty logs, meal tracking, schedules, reminders, reports, household data, and premium feature gating."
@@ -206,6 +229,6 @@ export function Projects() {
           />
         </div>
       </div>
-    </div>
+    </section>
   );
 }
