@@ -1,7 +1,10 @@
 import * as T from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
+import { createCoffeeCup, createCoffeeEmote } from "./coffee-emote";
+
 import type { Emote } from "./emotes";
+import { withEmoteGaze } from "./emote-gaze";
 
 export async function loadCharacter(
   parent: T.Group,
@@ -21,8 +24,6 @@ export async function loadCharacter(
       o.receiveShadow = true;
     }
   });
-  model.scale.setScalar(0.72);
-  parent.add(model);
   const mixer = new T.AnimationMixer(model);
   const clips = new Map(asset.animations.map((a) => [a.name, a]));
   const wave = waving.animations[0].clone();
@@ -102,36 +103,28 @@ export async function loadCharacter(
     );
   }
   clips.set("Jump", new T.AnimationClip("Jump", 0.9, jumpTracks));
-  const cup = new T.Group();
-  const cupMaterial = new T.MeshStandardMaterial({
-    color: 0xfff2d7,
-    roughness: 0.7,
-  });
-  const coffeeMaterial = new T.MeshStandardMaterial({
-    color: 0x593721,
-    roughness: 0.5,
-  });
-  const cupMesh = new T.Mesh(
-    new T.CylinderGeometry(0.09, 0.065, 0.15, 16),
-    cupMaterial,
+  clips.set("Coffee", createCoffeeEmote(model, clips.get("Idle")!));
+  clips.set("Fishing", createCoffeeEmote(model, clips.get("Idle")!, true));
+  for (const name of ["Wave", "Dance", "Cheer", "Coffee"]) {
+    clips.set(name, withEmoteGaze(clips.get(name)!, name === "Coffee"));
+  }
+  const fishingRod = new T.Group();
+  const shaft = new T.Mesh(
+    new T.CylinderGeometry(0.012, 0.023, 1.45, 8),
+    new T.MeshStandardMaterial({ color: 0x93663e }),
   );
-  cupMesh.position.y = 0.07;
-  cup.add(cupMesh);
-  const coffee = new T.Mesh(new T.CircleGeometry(0.078, 16), coffeeMaterial);
-  coffee.rotation.x = -Math.PI / 2;
-  coffee.position.y = 0.148;
-  cup.add(coffee);
-  const handle = new T.Mesh(
-    new T.TorusGeometry(0.065, 0.016, 8, 16),
-    cupMaterial,
-  );
-  handle.position.set(0.09, 0.075, 0);
-  cup.add(handle);
-  const hand = model.getObjectByName("handr");
-  hand?.add(cup);
-  cup.position.set(0, 0.1, 0);
-  cup.rotation.x = Math.PI / 2;
-  cup.visible = false;
+  shaft.position.y = 0.68;
+  fishingRod.add(shaft);
+  fishingRod.rotation.x = 1.03;
+  const rodTip = new T.Object3D();
+  rodTip.position.y = 1.405;
+  fishingRod.add(rodTip);
+  model.getObjectByName("handr")!.add(fishingRod);
+  fishingRod.visible = false;
+  const coffeeEmote = createCoffeeCup(model.getObjectByName("handr")!);
+  const { cup } = coffeeEmote;
+  model.scale.setScalar(0.72);
+  parent.add(model);
   let active = idle;
   let currentEmote: Emote | null = null;
   let remaining = 0;
@@ -160,6 +153,7 @@ export async function loadCharacter(
   };
   return {
     cancel: end,
+    rodTip,
     update(
       dt: number,
       speed: number,
@@ -167,7 +161,18 @@ export async function loadCharacter(
       paused: boolean,
       reduced: boolean,
       jumping: boolean,
+      fishing = false,
     ) {
+      fishingRod.visible = fishing && !paused;
+      if (fishing && !paused) {
+        end();
+        if (locomotion !== "Fishing") {
+          change("Fishing", true);
+          locomotion = "Fishing";
+        }
+        mixer.update(dt);
+        return;
+      }
       if (paused) {
         end();
         return;
@@ -189,10 +194,10 @@ export async function loadCharacter(
           wave: "Wave",
           dance: "Dance",
           celebrate: "Cheer",
-          kopi: "Use_Item",
+          kopi: "Coffee",
         }[request];
         change(clipName, true);
-        active.timeScale = request === "kopi" ? 0.5 : 1;
+        active.timeScale = 1;
         remaining = active.getClip().duration / active.timeScale;
         cup.visible = request === "kopi";
       }
@@ -211,6 +216,7 @@ export async function loadCharacter(
       }
       // Explicitly requested emotes still play; reduced motion suppresses ambient idle motion.
       mixer.update(reduced && !currentEmote && speed <= 0.05 ? 0 : dt);
+      if (currentEmote === "kopi") coffeeEmote.update(active.time, reduced);
     },
     dispose() {
       mixer.stopAllAction();

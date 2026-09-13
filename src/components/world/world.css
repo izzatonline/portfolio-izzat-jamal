@@ -1212,3 +1212,47 @@
 .world-joystick-base[data-running="true"] .world-joystick-knob > span {
   background: #f4fae9;
 }
+
+.world-prompt > button:disabled {
+  cursor: default;
+}
+.world-catch-art {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin: 24px auto 12px;
+  width: 210px;
+  height: 135px;
+  color: #a7672c;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #f6dda0, #d8e9dc 72%);
+}
+.world-catch-art > svg {
+  animation: world-fish-arrive 650ms ease-out both;
+}
+.world-catch-art > span {
+  color: #b9883c;
+  font-size: 25px;
+}
+.world-catch-caption {
+  color: #587362;
+  font-size: 12px;
+  text-align: center;
+  margin-bottom: 22px;
+}
+@keyframes world-fish-arrive {
+  from {
+    transform: translateY(16px) rotate(-15deg) scale(0.75);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) rotate(0) scale(1);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .world-catch-art > svg {
+    animation: none;
+  }
+}
