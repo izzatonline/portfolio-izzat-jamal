@@ -57,6 +57,11 @@ export function Hero() {
               View work
               <ArrowDown className="ml-2 h-4 w-4" />
             </Button>
+            <Button size="lg" variant="outline" asChild>
+              <Link href="/explore" prefetch={false}>
+                Explore my world <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </div>
 

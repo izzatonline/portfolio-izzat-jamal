@@ -5,6 +5,7 @@ import {
   BadgeDollarSign,
   BriefcaseBusiness,
   Github,
+  Globe2,
   Linkedin,
   Menu,
   Newspaper,
@@ -20,6 +21,7 @@ import {
 
 export default function Header() {
   const navItems = [
+    { href: "/explore", label: "Explore", icon: Globe2 },
     {
       href: "/blog",
       label: "Blog",
