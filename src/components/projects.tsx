@@ -14,8 +14,8 @@ export function Projects() {
           </h2>
           <p className="mt-4 text-base leading-7 text-muted-foreground">
             The main work I want to be known for: shared account platforms,
-            cross-product UI architecture, design systems, and developer
-            tooling used by product teams.
+            cross-product UI architecture, design systems, and developer tooling
+            used by product teams.
           </p>
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -140,7 +140,7 @@ export function Projects() {
       </div>
 
       {/* Personal projects */}
-      <div className="mx-auto max-w-6xl">
+      <div id="independent-builds" className="mx-auto max-w-6xl">
         <div className="mb-8 max-w-3xl">
           <p className="mb-3 text-sm font-medium text-muted-foreground">
             Independent builds

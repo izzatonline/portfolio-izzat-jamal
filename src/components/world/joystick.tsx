@@ -2,24 +2,30 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
-const RADIUS = 42;
-const DEAD_ZONE = 7;
+import { joystickInput } from "./joystick-input";
 
 export default function Joystick({
   onInput,
   disabled,
   onMove,
 }: {
-  onInput: (x: number, y: number) => void;
+  onInput: (x: number, y: number, running: boolean) => void;
   disabled: boolean;
   onMove: () => void;
 }) {
+  const base = useRef<HTMLButtonElement>(null);
+  const label = useRef<HTMLSpanElement>(null);
+  const running = useRef(false);
+  const outerRadius = useRef(62);
   const knob = useRef<HTMLSpanElement>(null);
   const pointer = useRef<number | null>(null);
   const center = useRef({ x: 0, y: 0 });
   const reset = useCallback(() => {
     pointer.current = null;
-    onInput(0, 0);
+    running.current = false;
+    onInput(0, 0, false);
+    if (base.current) base.current.dataset.running = "false";
+    if (label.current) label.current.textContent = "OUTSIDE RING TO RUN";
     if (knob.current) knob.current.style.transform = "translate(0px, 0px)";
   }, [onInput]);
   useEffect(() => {
@@ -44,21 +50,23 @@ export default function Joystick({
   const move = (x: number, y: number) => {
     const dx = x - center.current.x,
       dy = y - center.current.y;
-    const length = Math.hypot(dx, dy);
-    const clamped = Math.min(length, RADIUS);
-    const strength = Math.max(0, (clamped - DEAD_ZONE) / (RADIUS - DEAD_ZONE));
-    onInput(
-      length ? (dx / length) * strength : 0,
-      length ? (dy / length) * strength : 0,
-    );
+    const input = joystickInput(dx, dy, outerRadius.current, running.current);
+    running.current = input.running;
+    onInput(input.x, input.y, input.running);
+    if (base.current) base.current.dataset.running = String(input.running);
+    if (label.current)
+      label.current.textContent = input.running
+        ? "RUNNING"
+        : "OUTSIDE RING TO RUN";
     if (knob.current)
-      knob.current.style.transform = `translate(${length ? (dx / length) * clamped : 0}px, ${length ? (dy / length) * clamped : 0}px)`;
-    if (strength > 0) onMove();
+      knob.current.style.transform = `translate(${input.offsetX}px, ${input.offsetY}px)`;
+    if (input.x || input.y) onMove();
   };
   return (
     <div className="world-joystick">
       <button
         className="world-joystick-base"
+        ref={base}
         disabled={disabled}
         aria-label="Movement joystick"
         aria-describedby="joystick-help"
@@ -66,6 +74,7 @@ export default function Joystick({
           if (pointer.current !== null || disabled) return;
           event.preventDefault();
           const bounds = event.currentTarget.getBoundingClientRect();
+          outerRadius.current = bounds.width / 2;
           center.current = {
             x: bounds.left + bounds.width / 2,
             y: bounds.top + bounds.height / 2,
@@ -94,12 +103,13 @@ export default function Joystick({
           <span />
         </span>
       </button>
-      <span aria-hidden="true" className="world-joystick-label">
-        DRAG TO MOVE
+      <span aria-hidden="true" className="world-joystick-label" ref={label}>
+        OUTSIDE RING TO RUN
       </span>
       <span className="sr-only" id="joystick-help">
-        Drag in any direction to walk. Drag farther to move faster. Release to
-        stop. Keyboard arrow keys also work.
+        Drag in any direction to walk. Push outside the outer circle to run, and
+        move back inside to walk. Release to stop. Keyboard arrow keys also
+        work.
       </span>
     </div>
   );

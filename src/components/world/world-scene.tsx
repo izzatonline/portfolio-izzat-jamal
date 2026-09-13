@@ -3,8 +3,20 @@
 import { useEffect, useRef } from "react";
 import * as T from "three";
 import { loadCharacter } from "./character";
+import { readWorldSession, saveWorldSession } from "./world-session";
+import { createWorldCollision } from "./world-collision";
 import type { Emote } from "./emotes";
-import { destinations } from "./destinations";
+import { destinations, POND_INDEX } from "./destinations";
+import {
+  createFishingPond,
+  POND_NORMAL,
+  POND_APPROACH,
+  POND_DOCK,
+  POND_RADII,
+  pondDeckHeight,
+  FISHING_DURATION,
+  type FishingStatus,
+} from "./fishing-pond";
 
 export type WorldControls = {
   keys: Set<string>;
@@ -15,7 +27,8 @@ export type WorldControls = {
   emote: Emote | null;
   running: boolean;
   jump: boolean;
-  joystick: { x: number; y: number };
+  fish: boolean;
+  joystick: { x: number; y: number; running: boolean };
 };
 type Props = {
   controls: React.RefObject<WorldControls>;
@@ -24,6 +37,8 @@ type Props = {
   onError: () => void;
   onEmote: (emote: Emote | null) => void;
   onJump: (jumping: boolean) => void;
+  onFishing: (status: FishingStatus) => void;
+  onRestoreView: (view: "walk" | "globe") => void;
 };
 const R = 12;
 const UP = new T.Vector3(0, 1, 0);
@@ -42,6 +57,8 @@ export default function WorldScene({
   onError,
   onEmote,
   onJump,
+  onFishing,
+  onRestoreView,
 }: Props) {
   const host = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -133,20 +150,29 @@ export default function WorldScene({
       return g;
     };
     mesh(world, new T.IcosahedronGeometry(R, 4), "#86ab83");
-    // All scenery is generated locally: no models, textures, or third-party asset requests.
-    const lake = surface(
-      new T.Vector3(-0.22, 0.96, -0.12).normalize(),
-      R - 0.025,
+    const fishingPond = createFishingPond(world);
+    const collision = createWorldCollision(
+      destinations.map((d) => spotNormal(d.angle)),
+      POND_NORMAL,
+      POND_APPROACH,
+      POND_RADII,
     );
-    const water = mesh(
-      lake,
-      new T.SphereGeometry(1, 32, 12),
-      "#88bec0",
-      0,
-      0,
-      0,
-    );
-    water.scale.set(1.05, 0.12, 0.62);
+    let routeTarget: number | null = null;
+    let route: T.Vector3[] = [];
+    const playerNormal = () =>
+      UP.clone().applyQuaternion(world.quaternion.clone().invert());
+    const applyMovement = (rotation: T.Quaternion) => {
+      const start = playerNormal();
+      const proposed = world.quaternion.clone().premultiply(rotation);
+      const desired = UP.clone().applyQuaternion(proposed.invert());
+      const resolved = collision.move(start, desired);
+      const localRotation = new T.Quaternion().setFromUnitVectors(
+        resolved,
+        start,
+      );
+      world.quaternion.multiply(localRotation).normalize();
+      return start.angleTo(resolved) * R;
+    };
     for (let i = 0; i < 340; i++) {
       const a = i * 2.399963;
       const y = 1 - ((i + 0.5) / 340) * 2;
@@ -158,7 +184,7 @@ export default function WorldScene({
       if (
         n.y > 0.995 ||
         destinations.some((d) => n.angleTo(spotNormal(d.angle)) < 0.095) ||
-        n.angleTo(lake.position.clone().normalize()) < 0.1
+        n.angleTo(POND_NORMAL) < 0.29
       )
         continue;
       const g = surface(n);
@@ -379,10 +405,31 @@ export default function WorldScene({
     const body = new T.Group();
     body.rotation.y = Math.PI;
     avatar.add(body);
+    const saved = readWorldSession();
+    if (saved) {
+      world.quaternion.fromArray(saved.rotation).normalize();
+      body.rotation.y = saved.heading;
+      onRestoreView(saved.view);
+    }
+    const savePosition = () => saveWorldSession({
+      rotation: world.quaternion.toArray() as [number, number, number, number],
+      heading: body.rotation.y,
+      view: controls.current.view,
+    });
+    const saveWhenHidden = () => {
+      if (document.hidden) savePosition();
+    };
+    window.addEventListener("pagehide", savePosition);
+    document.addEventListener("visibilitychange", saveWhenHidden);
     let character: Awaited<ReturnType<typeof loadCharacter>> | undefined;
     let disposed = false;
     let posing = false;
     let jumpTime: number | null = null;
+    let fishingTime: number | null = null;
+    let walkingToDock = false;
+    let settlingTime: number | null = null;
+    let fishingAttempts = 0;
+    let biteReported = false;
     loadCharacter(body, (emote) => {
       posing = emote !== null;
       onEmote(emote);
@@ -414,15 +461,28 @@ export default function WorldScene({
     let cameraView = controls.current.view;
     let transitionTime = 1.4;
     let startFov = camera.fov;
+    let pondFraming = 0;
     const updateCamera = (immediate: boolean, dt = 0) => {
       const walking = controls.current.view === "walk";
       const narrow = camera.aspect < 0.8;
+      const besideDock = playerNormal().angleTo(POND_DOCK) < 0.055 ? 1 : 0;
+      pondFraming = immediate
+        ? besideDock
+        : T.MathUtils.damp(pondFraming, besideDock, 4, dt);
       cameraTarget.set(
         0,
-        walking ? R + 8 : 25.7,
-        walking ? (narrow ? 10.2 : 7) : narrow ? 57.6 : 43.9,
+        walking ? R + 8 + pondFraming * 0.4 : 25.7,
+        walking
+          ? (narrow ? 10.2 : 7) + pondFraming * 0.8
+          : narrow
+            ? 57.6
+            : 43.9,
       );
-      lookTarget.set(0, walking ? R + 0.25 : 2.64, walking ? -1.7 : 0);
+      lookTarget.set(
+        0,
+        walking ? R + 0.25 : 2.64,
+        walking ? T.MathUtils.lerp(-1.7, 0.9, pondFraming) : 0,
+      );
       if (!walking) {
         // Leave space for the interface now that both views share a full-size canvas.
         cameraTarget
@@ -478,6 +538,44 @@ export default function WorldScene({
       if (document.hidden) return;
       const c = controls.current;
       updateCamera(reduced.matches, dt);
+      if (
+        (fishingTime !== null || walkingToDock || settlingTime !== null) &&
+        (c.reset ||
+          c.paused ||
+          c.jump ||
+          c.emote ||
+          (c.target !== null && (!walkingToDock || c.target !== POND_INDEX)) ||
+          c.keys.size > 0 ||
+          c.joystick.x ||
+          c.joystick.y)
+      ) {
+        if (walkingToDock && c.target === POND_INDEX) c.target = null;
+        fishingTime = null;
+        walkingToDock = false;
+        settlingTime = null;
+        routeTarget = null;
+        route = [];
+        onFishing("idle");
+      }
+      if (c.fish) {
+        if (
+          near === POND_INDEX &&
+          fishingTime === null &&
+          !walkingToDock &&
+          settlingTime === null &&
+          !c.paused &&
+          jumpTime === null
+        ) {
+          walkingToDock = true;
+          c.target = POND_INDEX;
+          routeTarget = null;
+          c.keys.clear();
+          c.emote = null;
+          character?.cancel();
+          onFishing("walking");
+        }
+        c.fish = false;
+      }
       if (c.reset) {
         world.quaternion.identity();
         body.rotation.y = Math.PI;
@@ -488,12 +586,15 @@ export default function WorldScene({
         onJump(false);
         c.reset = false;
         c.target = null;
+        routeTarget = null;
+        route = [];
+        savePosition();
       }
-      const requestedSpeed = c.paused
-        ? 0
-        : c.running || c.keys.has("shift")
-          ? 4
-          : 2.1;
+      const wantsRun =
+        c.joystick.x || c.joystick.y
+          ? c.joystick.running
+          : c.running || c.keys.has("shift");
+      const requestedSpeed = c.paused ? 0 : wantsRun ? 4 : 2.1;
       let dx = 0,
         dz = 0;
       if (!c.paused) {
@@ -520,25 +621,73 @@ export default function WorldScene({
           10,
           dt,
         );
+        if (c.target !== routeTarget) {
+          routeTarget = c.target;
+          route =
+            c.target === null
+              ? []
+              : collision.route(
+                  playerNormal(),
+                  c.target,
+                  walkingToDock ? POND_DOCK : undefined,
+                );
+        }
         if (c.target !== null) {
-          normal
-            .copy(spotNormal(destinations[c.target].angle))
-            .applyQuaternion(world.quaternion);
-          const distance = normal.angleTo(UP);
-          if (distance < 0.07) c.target = null;
+          const next = route[0];
+          if (!next) c.target = null;
           else {
-            axis.crossVectors(normal, UP).normalize();
-            q.setFromAxisAngle(axis, Math.min(distance, (dt * speed) / R));
-            world.quaternion.premultiply(q).normalize();
-            dx = normal.x;
-            dz = normal.z;
+            normal.copy(next).applyQuaternion(world.quaternion);
+            const distance = normal.angleTo(UP);
+            if (distance < 0.001) {
+              route.shift();
+              if (!route.length) c.target = null;
+            } else {
+              axis.crossVectors(normal, UP).normalize();
+              q.setFromAxisAngle(axis, Math.min(distance, (dt * speed) / R));
+              applyMovement(q);
+              dx = normal.x;
+              dz = normal.z;
+            }
           }
         } else if (dx || dz) {
           axis.set(-dz, 0, dx).normalize();
           q.setFromAxisAngle(axis, (dt * speed) / R);
-          world.quaternion.premultiply(q).normalize();
+          const travelled = applyMovement(q);
+          if (travelled < 0.00001) {
+            dx = 0;
+            dz = 0;
+          }
         }
       }
+      if (walkingToDock && c.target === null) {
+        walkingToDock = false;
+        if (playerNormal().angleTo(POND_DOCK) < 0.003) settlingTime = 0;
+        else onFishing("idle");
+      }
+      if (settlingTime !== null) {
+        // Gently orient the clearing so the water lies between the dock and camera.
+        normal.copy(POND_NORMAL).applyQuaternion(world.quaternion);
+        const heading = Math.atan2(normal.x, normal.z);
+        q.setFromAxisAngle(
+          UP,
+          -heading * (reduced.matches ? 1 : 1 - Math.exp(-dt * 5)),
+        );
+        world.quaternion.premultiply(q).normalize();
+        settlingTime += dt;
+        if (
+          reduced.matches ||
+          (settlingTime >= 0.65 && Math.abs(heading) < 0.015)
+        ) {
+          settlingTime = null;
+          fishingTime = 0;
+          biteReported = false;
+          speed = 0;
+          onFishing("casting");
+        }
+      }
+      const groundHeight = R + 0.04 + pondDeckHeight(playerNormal());
+      if (jumpTime === null) avatar.position.y = groundHeight;
+      ring.position.y = groundHeight - 0.01;
       if (c.jump) {
         if (character && !c.paused && jumpTime === null) {
           jumpTime = 0;
@@ -551,18 +700,30 @@ export default function WorldScene({
       if (jumpTime !== null && !c.paused) {
         jumpTime += dt;
         const flight = T.MathUtils.clamp((jumpTime - 0.1) / 0.68, 0, 1);
-        avatar.position.y = R + 0.04 + 4 * 0.95 * flight * (1 - flight);
+        avatar.position.y = groundHeight + 4 * 0.95 * flight * (1 - flight);
         if (jumpTime >= 0.9) {
           jumpTime = null;
-          avatar.position.y = R + 0.04;
+          avatar.position.y = groundHeight;
           onJump(false);
         }
       }
       const moving = dx !== 0 || dz !== 0;
       const request = jumpTime === null ? c.emote : null;
       c.emote = null;
-      if (moving || request || posing) {
-        const targetAngle = moving ? Math.atan2(dx, dz) : 0;
+      if (
+        moving ||
+        request ||
+        posing ||
+        fishingTime !== null ||
+        settlingTime !== null
+      ) {
+        normal.copy(POND_NORMAL).applyQuaternion(world.quaternion);
+        const targetAngle =
+          fishingTime !== null || settlingTime !== null
+            ? Math.atan2(normal.x, normal.z)
+            : moving
+              ? Math.atan2(dx, dz)
+              : 0;
         const delta = Math.atan2(
           Math.sin(targetAngle - body.rotation.y),
           Math.cos(targetAngle - body.rotation.y),
@@ -576,6 +737,7 @@ export default function WorldScene({
         c.paused,
         reduced.matches,
         jumpTime !== null,
+        fishingTime !== null,
       );
       let closest: number | null = null,
         distance = 0.105;
@@ -587,11 +749,32 @@ export default function WorldScene({
           closest = i;
         }
       });
+      normal.copy(POND_NORMAL).applyQuaternion(world.quaternion);
+      const pondDistance = normal.angleTo(UP);
+      if (pondDistance < 0.26 && closest === null) closest = POND_INDEX;
       if (closest !== near) {
         near = closest;
         onNear(near);
       }
       const ambient = reduced.matches ? 0 : time / 1000;
+      fishingPond.update(
+        ambient,
+        fishingTime,
+        fishingAttempts >= 1,
+        character?.rodTip,
+      );
+      if (fishingTime !== null) {
+        fishingTime += dt;
+        if (fishingTime >= 2.3 && !biteReported) {
+          biteReported = true;
+          onFishing("bite");
+        }
+        if (fishingTime >= FISHING_DURATION) {
+          fishingTime = null;
+          fishingAttempts += 1;
+          onFishing(fishingAttempts >= 2 ? "caught" : "missed");
+        }
+      }
       foliage.forEach((tree, i) => {
         tree.rotation.z = Math.sin(ambient * 1.1 + i) * 0.035;
       });
@@ -627,19 +810,28 @@ export default function WorldScene({
       renderer.render(scene, camera);
     });
     return () => {
+      savePosition();
+      window.removeEventListener("pagehide", savePosition);
+      document.removeEventListener("visibilitychange", saveWhenHidden);
       disposed = true;
       character?.dispose();
       renderer.setAnimationLoop(null);
       observer.disconnect();
       renderer.domElement.removeEventListener("webglcontextlost", lost);
+      const sceneMaterials = new Set<T.Material>(materials.values());
       scene.traverse((o) => {
-        if (o instanceof T.Mesh) o.geometry.dispose();
+        if (o instanceof T.Mesh || o instanceof T.Line) {
+          o.geometry.dispose();
+          (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) =>
+            sceneMaterials.add(m),
+          );
+        }
       });
-      materials.forEach((m) => m.dispose());
+      sceneMaterials.forEach((m) => m.dispose());
       renderer.dispose();
       renderer.forceContextLoss();
       renderer.domElement.remove();
     };
-  }, [controls, onNear, onReady, onError, onEmote, onJump]);
+  }, [controls, onNear, onReady, onError, onEmote, onJump, onFishing, onRestoreView]);
   return <div className="world-canvas" ref={host} aria-hidden="true" />;
 }

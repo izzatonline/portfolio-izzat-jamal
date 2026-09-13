@@ -11,14 +11,28 @@ import {
   Check,
   Compass,
   Footprints,
+  Fish,
   Globe2,
   MapPin,
   RotateCcw,
   X,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from "@/components/ui/dropdown-menu";
 import { emotes, type Emote } from "./emotes";
 import Joystick from "./joystick";
-import { destinations } from "./destinations";
+import { destinations, POND_INDEX } from "./destinations";
+import type { FishingStatus } from "./fishing-pond";
+
+const placeName = (index: number) =>
+  index === POND_INDEX ? "The fishing pond" : destinations[index].name;
 import type { WorldControls } from "./world-scene";
 import "./world.css";
 
@@ -40,8 +54,12 @@ export default function WorldExplorer() {
     emote: null,
     running: false,
     jump: false,
-    joystick: { x: 0, y: 0 },
+    fish: false,
+    joystick: { x: 0, y: 0, running: false },
   });
+  const [fishing, setFishing] = useState<FishingStatus>("idle");
+  const fishingBusy =
+    fishing === "walking" || fishing === "casting" || fishing === "bite";
   const [jumping, setJumping] = useState(false);
   const onJump = useCallback((value: boolean) => setJumping(value), []);
   const [activeEmote, setActiveEmote] = useState<Emote | null>(null);
@@ -52,6 +70,10 @@ export default function WorldExplorer() {
     [],
   );
   const [view, setView] = useState<"walk" | "globe">("walk");
+  const onRestoreView = useCallback((value: "walk" | "globe") => {
+    controls.current.view = value;
+    setView(value);
+  }, []);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [near, setNear] = useState<number | null>(null);
@@ -65,9 +87,12 @@ export default function WorldExplorer() {
     setEmotesOpen(false);
     setTravel(null);
   }, []);
-  const onJoystickInput = useCallback((x: number, y: number) => {
-    controls.current.joystick = { x, y };
-  }, []);
+  const onJoystickInput = useCallback(
+    (x: number, y: number, running: boolean) => {
+      controls.current.joystick = { x, y, running };
+    },
+    [],
+  );
   const onJoystickMove = useCallback(() => setTravel(null), []);
   const dialog = useRef<HTMLDialogElement>(null);
   const lastFocus = useRef<HTMLElement | null>(null);
@@ -78,6 +103,10 @@ export default function WorldExplorer() {
     if (index !== null) setTravel(null);
   }, []);
   const open = useCallback((index: number) => {
+    if (index === POND_INDEX) {
+      controls.current.fish = true;
+      return;
+    }
     lastFocus.current =
       document.activeElement instanceof HTMLElement
         ? document.activeElement
@@ -89,11 +118,30 @@ export default function WorldExplorer() {
     setTravel(null);
     setVisited((v) => (v.includes(index) ? v : [...v, index]));
   }, []);
+  const onFishing = useCallback((status: FishingStatus) => {
+    setFishing(status);
+    if (status === "caught") {
+      lastFocus.current =
+        document.activeElement instanceof HTMLElement
+          ? document.activeElement
+          : null;
+      controls.current.paused = true;
+      controls.current.keys.clear();
+      controls.current.joystick = { x: 0, y: 0, running: false };
+      controls.current.target = null;
+      setSelected(POND_INDEX);
+      setTravel(null);
+    }
+  }, []);
   const close = useCallback(() => {
     dialog.current?.close();
     setSelected(null);
+    setFishing("idle");
     controls.current.paused = false;
-    lastFocus.current?.focus();
+    const focusTarget = lastFocus.current?.isConnected
+      ? lastFocus.current
+      : document.querySelector<HTMLButtonElement>(".world-where-button");
+    focusTarget?.focus();
   }, []);
   useEffect(() => {
     if (selected !== null) dialog.current?.showModal();
@@ -231,6 +279,8 @@ export default function WorldExplorer() {
           onError={onError}
           onEmote={onEmote}
           onJump={onJump}
+          onFishing={onFishing}
+          onRestoreView={onRestoreView}
         />
       )}
       {(!ready || failed) && (
@@ -265,7 +315,7 @@ export default function WorldExplorer() {
             <RotateCcw size={15} />
           </button>
         </div>
-        <p>Five places. One curious wanderer.</p>
+        <p>Five stories. A pond. One curious wanderer.</p>
         <p className="world-guide-hint">
           Walk with <kbd>W A S D</kbd> or arrow keys.
           <br />
@@ -287,28 +337,45 @@ export default function WorldExplorer() {
       </aside>
       <div className="world-prompt" aria-live="polite">
         {near !== null && !failed ? (
-          <button onClick={() => open(near)}>
+          <button
+            onClick={() => open(near)}
+            disabled={near === POND_INDEX && (fishingBusy || jumping)}
+          >
             <span className="world-prompt-icon">
-              <MapPin size={19} />
+              {near === POND_INDEX ? <Fish size={19} /> : <MapPin size={19} />}
             </span>
             <span>
-              <small>YOU’VE FOUND</small>
-              <strong>{destinations[near].name}</strong>
+              <small>
+                {near === POND_INDEX
+                  ? fishing === "walking"
+                    ? "WALKING TO THE FISHING PLATFORM…"
+                    : fishing === "missed"
+                      ? "A NIBBLE! TRY ANOTHER CAST"
+                      : fishing === "bite"
+                        ? "SOMETHING’S BITING…"
+                        : fishing === "casting"
+                          ? "WAITING FOR A BITE…"
+                          : "TAKE A LITTLE BREAK"
+                  : "YOU’VE FOUND"}
+              </small>
+              <strong>{placeName(near)}</strong>
             </span>
             <span className="world-prompt-action">
-              Explore <kbd>E</kbd>
+              {near === POND_INDEX
+                ? fishingBusy
+                  ? fishing === "walking"
+                    ? "Getting ready…"
+                    : "Fishing…"
+                  : "Cast line"
+                : "Explore"}{" "}
+              <kbd>E</kbd>
               <ArrowRight size={15} />
             </span>
           </button>
         ) : travel !== null ? (
           <p>
             <Footprints size={16} /> Walking to{" "}
-            {destinations[travel].name.toLowerCase()}…
-          </p>
-        ) : ready && !failed ? (
-          <p>
-            <Footprints size={16} /> Follow a path, or choose a destination
-            below.
+            {placeName(travel).toLowerCase()}…
           </p>
         ) : null}
       </div>
@@ -320,7 +387,7 @@ export default function WorldExplorer() {
         </div>
         <div className="world-action-buttons">
           <button
-            disabled={!ready || failed || jumping}
+            disabled={!ready || failed || jumping || fishingBusy}
             onClick={() => {
               controls.current.jump = true;
             }}
@@ -403,44 +470,77 @@ export default function WorldExplorer() {
           </button>
         ))}
       </div>
-      <nav className="world-destinations" aria-label="Portfolio destinations">
-        <div className="world-destinations-label">
-          <Compass size={14} />
-          <span>WHERE TO?</span>
-          <small>Choose a stop to walk there</small>
-        </div>
-        <div className="world-stops">
-          {destinations.map((d, i) => (
-            <div
-              className={`world-stop ${near === i ? "is-near" : ""}`}
-              key={d.id}
-            >
-              <button
-                className="world-go"
-                onClick={() => go(i)}
+      <nav
+        className="world-destination-picker"
+        aria-label="Portfolio destinations"
+      >
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger asChild>
+            <button className="world-where-button">
+              <Compass size={17} /> Where to?
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="world-destination-menu"
+            side="top"
+            align="start"
+            sideOffset={12}
+            collisionPadding={16}
+            aria-label="Choose a destination"
+          >
+            <p className="world-menu-heading">PLACES TO DISCOVER</p>
+            {destinations.map((d, i) => (
+              <DropdownMenuItem
+                key={d.id}
+                className="world-destination-menu-item"
                 disabled={!ready && !failed}
-                aria-label={`Walk to ${d.name}`}
+                onSelect={() => go(i)}
               >
-                <span style={{ background: d.color }}>
+                <span
+                  className="world-menu-number"
+                  style={{ background: d.color }}
+                >
                   {visited.includes(i) ? (
-                    <Check size={15} />
+                    <Check size={14} />
                   ) : (
                     String(i + 1).padStart(2, "0")
                   )}
                 </span>
-                <strong>{d.name}</strong>
-                <ArrowRight size={14} />
-              </button>
-              <button
-                className="world-read"
-                onClick={() => open(i)}
-                aria-label={`Read ${d.name} story without walking`}
+                {d.name}
+              </DropdownMenuItem>
+            ))}
+            <p className="world-menu-heading">TAKE A BREAK</p>
+            <DropdownMenuItem
+              className="world-destination-menu-item"
+              disabled={!ready || failed}
+              onSelect={() => go(POND_INDEX)}
+            >
+              <span
+                className="world-menu-number"
+                style={{ background: "#99c9c6" }}
               >
-                Read story
-              </button>
-            </div>
-          ))}
-        </div>
+                <Fish size={16} />
+              </span>
+              The fishing pond
+            </DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                Read without walking
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent
+                className="world-destination-menu"
+                sideOffset={8}
+                collisionPadding={16}
+              >
+                {destinations.map((d, i) => (
+                  <DropdownMenuItem key={d.id} onSelect={() => open(i)}>
+                    {d.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </nav>
       <footer className="world-footer">
         <span>BUILT WITH CURIOSITY & A LITTLE CODE.</span>
@@ -458,6 +558,39 @@ export default function WorldExplorer() {
           if (e.target === e.currentTarget) close();
         }}
       >
+        {selected === POND_INDEX && (
+          <article className="world-catch-card">
+            <button
+              className="world-close"
+              onClick={close}
+              aria-label="Close catch"
+            >
+              <X size={20} />
+            </button>
+            <p className="world-eyebrow">A LITTLE PATIENCE. A LOVELY CATCH.</p>
+            <div className="world-catch-art" aria-hidden="true">
+              <span>✦</span>
+              <Fish size={84} strokeWidth={1.4} />
+              <span>✧</span>
+            </div>
+            <p className="world-catch-caption">
+              You caught a golden pond fish!
+            </p>
+            <h2 id="world-story-title">Enjoyed this little world?</h2>
+            <h3>Imagine what we could build for your business.</h3>
+            <p className="world-story-text">
+              I build thoughtful websites and web apps with details that make
+              people stay a little longer. Take a look at my services and
+              starting rates.
+            </p>
+            <Link className="world-story-link" href="/#rates">
+              View my service rates <ArrowRight size={17} />
+            </Link>
+            <button className="world-continue" onClick={close}>
+              Release the fish & keep exploring
+            </button>
+          </article>
+        )}
         {destination && (
           <article>
             <button

@@ -1,4 +1,11 @@
-import { BadgeDollarSign, CheckCircle2, Clock3, Handshake } from "lucide-react";
+import Link from "next/link";
+import {
+  ArrowRight,
+  BadgeDollarSign,
+  CheckCircle2,
+  Clock3,
+  Handshake,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -78,11 +85,14 @@ export function FreelanceRates() {
 
           <Card className="bg-background/85 shadow-sm dark:border-border dark:bg-card">
             <CardContent className="p-4 text-sm leading-6 text-muted-foreground">
-            <div className="mb-2 flex items-center gap-2 font-medium text-foreground">
-              <Clock3 className="h-4 w-4" aria-hidden />
-              Typical timeline
-            </div>
-            <p>1 to 4 weeks depending on scope and feedback speed.</p>
+              <div className="mb-2 flex items-center gap-2 font-medium text-foreground">
+                <Clock3 className="h-4 w-4" aria-hidden />
+                Typical website timeline
+              </div>
+              <p>
+                1 to 4 weeks for a scoped website. App and platform timelines
+                are agreed separately.
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -98,53 +108,76 @@ export function FreelanceRates() {
               }`}
             >
               <CardContent className="p-6">
-              <div className="mb-6 flex items-start justify-between gap-4">
-                <div>
-                  <h3 className="text-xl font-semibold text-foreground">
-                    {item.name}
-                  </h3>
-                  <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                    {item.description}
-                  </p>
+                <div className="mb-6 flex items-start justify-between gap-4">
+                  <div>
+                    <h3 className="text-xl font-semibold text-foreground">
+                      {item.name}
+                    </h3>
+                    <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                      {item.description}
+                    </p>
+                  </div>
+                  {item.featured ? (
+                    <Badge variant="default">Popular</Badge>
+                  ) : null}
                 </div>
-                {item.featured ? (
-                  <Badge variant="default">
-                    Popular
-                  </Badge>
-                ) : null}
-              </div>
 
-              <p className="mb-6 text-3xl font-bold text-foreground">
-                {item.price}
-              </p>
+                <p className="mb-6 text-3xl font-bold text-foreground">
+                  {item.price}
+                </p>
 
-              <ul className="space-y-3 text-sm leading-6 text-muted-foreground">
-                {item.features.map((feature) => (
-                  <li key={feature} className="flex gap-3">
-                    <CheckCircle2
-                      className="mt-0.5 h-4 w-4 shrink-0 text-foreground"
-                      aria-hidden
-                    />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
+                <ul className="space-y-3 text-sm leading-6 text-muted-foreground">
+                  {item.features.map((feature) => (
+                    <li key={feature} className="flex gap-3">
+                      <CheckCircle2
+                        className="mt-0.5 h-4 w-4 shrink-0 text-foreground"
+                        aria-hidden
+                      />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
               </CardContent>
             </Card>
           ))}
         </div>
 
+        <div className="mt-6 flex flex-col gap-5 rounded-xl border border-primary/25 bg-card p-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="max-w-2xl">
+            <h3 className="text-xl font-semibold">
+              Design system, SDK, mobile app, or interactive experience?
+            </h3>
+            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+              These projects start with a scope: the platforms, integrations,
+              deliverables, release process, and support you need. I’ll put
+              together a tailored estimate.
+            </p>
+          </div>
+          <a
+            href="mailto:izzat.online@gmail.com?subject=Let%E2%80%99s%20scope%20a%20project"
+            className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-md bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+          >
+            Let’s scope your project <ArrowRight size={16} aria-hidden />
+          </a>
+        </div>
+        <Link
+          href="/#services"
+          className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm underline underline-offset-4"
+        >
+          See the full service offering <ArrowRight size={14} aria-hidden />
+        </Link>
+
         <Card className="mt-6 bg-muted/50 shadow-none dark:border-border dark:bg-muted/45">
           <CardContent className="grid grid-cols-1 gap-4 p-5 text-sm leading-6 text-muted-foreground md:grid-cols-3">
-          {notes.map((note) => (
-            <div key={note} className="flex gap-3">
-              <Handshake
-                className="mt-0.5 h-4 w-4 shrink-0 text-foreground"
-                aria-hidden
-              />
-              <span>{note}</span>
-            </div>
-          ))}
+            {notes.map((note) => (
+              <div key={note} className="flex gap-3">
+                <Handshake
+                  className="mt-0.5 h-4 w-4 shrink-0 text-foreground"
+                  aria-hidden
+                />
+                <span>{note}</span>
+              </div>
+            ))}
           </CardContent>
         </Card>
       </div>

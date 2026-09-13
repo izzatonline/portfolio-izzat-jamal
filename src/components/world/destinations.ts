@@ -86,3 +86,5 @@ export const destinations = [
   },
 ] as const;
 export type Destination = (typeof destinations)[number];
+
+export const POND_INDEX = destinations.length;
