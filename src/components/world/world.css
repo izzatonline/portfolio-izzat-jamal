@@ -1,0 +1,1073 @@
+.world-page {
+  --ink: #293f36;
+  --muted: #657368;
+  --paper: #f4f2e9;
+  position: relative;
+  isolation: isolate;
+  min-height: 680px;
+  height: 100svh;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 52% 46%, #e2e8d7 0, #f4f2e9 58%);
+  color: var(--ink);
+  font-family: Arial, Helvetica, sans-serif;
+}
+.world-page * {
+  box-sizing: border-box;
+}
+.world-page button,
+.world-page a {
+  -webkit-tap-highlight-color: transparent;
+}
+.world-page button:focus-visible,
+.world-page a:focus-visible {
+  outline: 3px solid #638e70;
+  outline-offset: 5px;
+}
+.world-page button {
+  cursor: pointer;
+}
+.world-page button:disabled {
+  opacity: 0.45;
+  cursor: wait;
+}
+.world-header {
+  position: absolute;
+  z-index: 4;
+  left: 4%;
+  right: 4%;
+  top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.world-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  text-decoration: none;
+}
+.world-brand > span:first-child {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -3px;
+}
+.world-brand-dot {
+  color: #cc8866;
+}
+.world-brand > span:nth-child(2) {
+  font-size: 14px;
+  font-weight: 600;
+  border-left: 1px solid #cbd0c2;
+  padding-left: 16px;
+}
+.world-brand small {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  margin-top: 6px;
+  font-weight: 400;
+  color: var(--muted);
+}
+.world-back {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid #bdc6b8;
+  padding: 11px 16px;
+  border-radius: 30px;
+  font-size: 12px;
+  transition: background 0.2s;
+}
+.world-back:hover {
+  background: #e0e6d7;
+}
+.world-intro {
+  position: absolute;
+  left: 5%;
+  top: 152px;
+  z-index: 2;
+  pointer-events: none;
+}
+.world-eyebrow {
+  font-size: 9px;
+  letter-spacing: 1.8px;
+  font-weight: 600;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.world-eyebrow > span {
+  width: 6px;
+  height: 6px;
+  background: #6e9975;
+  border-radius: 50%;
+}
+.world-intro h1 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: clamp(42px, 4.5vw, 72px);
+  line-height: 1.02;
+  letter-spacing: -2.8px;
+  margin: 24px 0;
+}
+.world-intro h1 em {
+  font-weight: 400;
+  color: #6c8166;
+}
+.world-intro > p:not(.world-eyebrow) {
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--muted);
+}
+.world-edition {
+  display: block;
+  margin-top: 32px;
+  font-size: 8px;
+  letter-spacing: 1.8px;
+  color: #7d887a;
+}
+.world-canvas {
+  position: absolute;
+  inset: 40px 0 115px;
+  z-index: 0;
+}
+.world-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.world-guide {
+  position: absolute;
+  right: 4%;
+  top: 162px;
+  width: 222px;
+  z-index: 2;
+  border-top: 1px solid #bdc6b8;
+  padding-top: 16px;
+}
+.world-guide-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.world-guide-heading > span {
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  font-weight: 600;
+}
+.world-guide-heading > button {
+  margin-left: auto;
+  background: transparent;
+  border: 0;
+  padding: 6px;
+}
+.world-guide > p {
+  font-size: 12px;
+  margin: 16px 0;
+}
+.world-guide .world-guide-hint {
+  font-size: 11px;
+  line-height: 2.1;
+  color: var(--muted);
+}
+.world-page kbd {
+  font-family: inherit;
+  font-size: 10px;
+  border: 1px solid #c3ccbc;
+  background: #f8f7f0;
+  border-radius: 4px;
+  padding: 3px 5px;
+}
+.world-progress {
+  border-top: 1px solid #d1d7c9;
+  margin-top: 22px;
+  padding-top: 16px;
+  font-size: 10px;
+  color: var(--muted);
+}
+.world-progress > div {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+}
+.world-progress i {
+  height: 3px;
+  flex: 1;
+  background: #d8dece;
+}
+.world-progress i.is-visited {
+  background: #658569;
+}
+.world-location {
+  position: absolute;
+  left: 5%;
+  bottom: 259px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+}
+.world-location > span {
+  position: absolute;
+  top: 24px;
+  font-size: 7px;
+  letter-spacing: 1.8px;
+  white-space: nowrap;
+}
+.world-prompt {
+  position: absolute;
+  z-index: 3;
+  bottom: 216px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.world-prompt > p {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11px;
+  color: var(--muted);
+  background: #f4f2e9dc;
+  padding: 12px 17px;
+  border: 1px solid #d2d9c8;
+  border-radius: 30px;
+}
+.world-prompt > button {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  background: #fdfcf5;
+  border: 1px solid #c1ccba;
+  border-radius: 16px;
+  padding: 13px 18px;
+  box-shadow: 0 8px 30px #29412b10;
+  text-align: left;
+}
+.world-prompt-icon {
+  background: #e4eadb;
+  padding: 9px;
+  border-radius: 50%;
+}
+.world-prompt small {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.world-prompt strong {
+  font-size: 14px;
+}
+.world-prompt-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  margin-left: 18px;
+}
+.world-destinations {
+  position: absolute;
+  z-index: 3;
+  left: 5%;
+  right: 5%;
+  bottom: 58px;
+}
+.world-destinations-label {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 14px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+}
+.world-destinations-label small {
+  margin-left: auto;
+  font-size: 10px;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+.world-stops {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  background: #fbfaf4d9;
+  border: 1px solid #ccd3c2;
+  border-radius: 14px;
+  overflow: hidden;
+  backdrop-filter: blur(12px);
+}
+.world-stop {
+  padding: 16px 13px 12px;
+  border-right: 1px solid #d9dece;
+  transition: background 0.2s;
+}
+.world-stop:last-child {
+  border-right: 0;
+}
+.world-stop:hover,
+.world-stop.is-near {
+  background: #e8eddc;
+}
+.world-go {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+.world-go > span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 29px;
+  height: 29px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  font-size: 10px;
+}
+.world-go strong {
+  font-size: 11px;
+  font-weight: 500;
+  flex: 1;
+}
+.world-go > svg {
+  opacity: 0.5;
+}
+.world-read {
+  font-size: 9px;
+  color: var(--muted);
+  margin: 9px 0 0 39px;
+  text-underline-offset: 3px;
+  text-decoration: underline;
+  border: 0;
+  background: none;
+  padding: 0;
+}
+.world-footer {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  bottom: 23px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 7px;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+}
+.world-dpad {
+  position: absolute;
+  z-index: 3;
+  right: 4%;
+  bottom: 215px;
+  display: grid;
+  grid-template-columns: repeat(3, 38px);
+  grid-template-rows: repeat(2, 36px);
+  gap: 4px;
+}
+.world-dpad button {
+  display: grid;
+  place-items: center;
+  border: 1px solid #c5cfbc;
+  background: #faf9f0dd;
+  border-radius: 9px;
+  touch-action: none;
+  user-select: none;
+}
+.world-dpad button:active {
+  background: #d2dfc7;
+}
+.world-direction-w {
+  grid-column: 2;
+}
+.world-direction-a {
+  grid-column: 1;
+  grid-row: 2;
+}
+.world-direction-s {
+  grid-column: 2;
+  grid-row: 2;
+}
+.world-direction-d {
+  grid-column: 3;
+  grid-row: 2;
+}
+.world-loading {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  text-align: center;
+  max-width: 320px;
+}
+.world-loading strong {
+  font-family: Georgia, serif;
+  font-size: 24px;
+  font-weight: 400;
+}
+.world-loading span {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.world-dialog {
+  border: 1px solid #d6d9cc;
+  background: #f9f7ef;
+  color: var(--ink);
+  border-radius: 22px;
+  width: min(540px, calc(100vw - 32px));
+  max-height: 85svh;
+  padding: 0;
+  box-shadow: 0 30px 100px #12261930;
+  margin: auto;
+}
+.world-dialog::backdrop {
+  background: #1c302b70;
+  backdrop-filter: blur(7px);
+}
+.world-dialog article {
+  position: relative;
+  padding: 40px;
+}
+.world-close {
+  position: absolute;
+  right: 18px;
+  top: 18px;
+  border: 1px solid #d2d8c9;
+  background: transparent;
+  border-radius: 50%;
+  padding: 7px;
+}
+.world-story-orb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 28px 0 22px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  color: #334d40;
+}
+.world-dialog h2 {
+  font:
+    38px/1.1 Georgia,
+    serif;
+  letter-spacing: -1px;
+  margin: 0 0 13px;
+}
+.world-dialog h3 {
+  font-size: 13px;
+  font-weight: 400;
+  color: #6b7869;
+  line-height: 1.7;
+}
+.world-story-text {
+  font-size: 14px;
+  line-height: 1.9;
+  margin: 24px 0;
+  color: #506052;
+}
+.world-dialog ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+.world-dialog li {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  font-size: 12px;
+}
+.world-dialog li span {
+  height: 7px;
+  width: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.world-story-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 15px 18px;
+  background: #304e3c;
+  color: #faf8ef;
+  font-size: 12px;
+  border-radius: 9px;
+}
+.world-continue {
+  display: block;
+  margin: 18px auto 0;
+  font-size: 11px;
+  color: #657368;
+  background: none;
+  border: 0;
+}
+@media (min-width: 1600px) {
+  .world-canvas {
+    inset: 10px 5% 90px;
+  }
+  .world-intro {
+    left: 7%;
+    top: 180px;
+  }
+  .world-guide {
+    right: 7%;
+  }
+}
+@media (max-width: 1100px) {
+  .world-guide {
+    width: 180px;
+  }
+  .world-intro h1 {
+    font-size: 48px;
+  }
+  .world-intro {
+    top: 135px;
+  }
+  .world-intro > p:not(.world-eyebrow) {
+    font-size: 12px;
+    max-width: 220px;
+  }
+  .world-eyebrow {
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+  .world-edition {
+    font-size: 7px;
+  }
+  .world-go {
+    gap: 7px;
+  }
+  .world-go strong {
+    font-size: 10px;
+  }
+  .world-go > svg {
+    display: none;
+  }
+  .world-stop {
+    padding: 14px 10px;
+  }
+  .world-read {
+    margin-left: 36px;
+  }
+  .world-location {
+    display: none;
+  }
+}
+@media (max-width: 760px) {
+  .world-page {
+    min-height: 850px;
+    height: 100svh;
+  }
+  .world-header {
+    top: 22px;
+    left: 6%;
+    right: 6%;
+  }
+  .world-brand > span:first-child {
+    font-size: 27px;
+  }
+  .world-brand > span:nth-child(2) {
+    font-size: 12px;
+    padding-left: 12px;
+  }
+  .world-brand {
+    gap: 12px;
+  }
+  .world-brand small {
+    display: none;
+  }
+  .world-back {
+    font-size: 10px;
+    padding: 9px 11px;
+  }
+  .world-intro {
+    top: 108px;
+    left: 7%;
+  }
+  .world-intro h1 {
+    font-size: 46px;
+    letter-spacing: -2px;
+    margin: 17px 0 12px;
+  }
+  .world-intro > p:not(.world-eyebrow) {
+    font-size: 11px;
+    line-height: 1.7;
+    max-width: 270px;
+  }
+  .world-desktop-break {
+    display: none;
+  }
+  .world-edition {
+    display: none;
+  }
+  .world-guide {
+    top: 123px;
+    right: 6%;
+    width: 90px;
+    border: 0;
+    padding: 0;
+  }
+  .world-guide-heading > span,
+  .world-guide > p {
+    display: none;
+  }
+  .world-guide-heading {
+    justify-content: flex-end;
+  }
+  .world-guide-heading > svg {
+    display: none;
+  }
+  .world-progress {
+    font-size: 9px;
+    line-height: 1.6;
+    margin-top: 12px;
+    padding-top: 10px;
+  }
+  .world-canvas {
+    inset: 200px -20% 218px;
+  }
+  .world-prompt {
+    bottom: 271px;
+    max-width: 90vw;
+  }
+  .world-prompt > p {
+    font-size: 10px;
+    padding: 9px 12px;
+  }
+  .world-prompt > button {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .world-prompt strong {
+    font-size: 12px;
+  }
+  .world-prompt-action {
+    margin-left: 9px;
+  }
+  .world-prompt-action kbd {
+    display: none;
+  }
+  .world-dpad {
+    right: 6%;
+    bottom: 335px;
+    grid-template-columns: repeat(3, 34px);
+    grid-template-rows: repeat(2, 34px);
+  }
+  .world-destinations {
+    left: 6%;
+    right: 6%;
+    bottom: 45px;
+  }
+  .world-stops {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .world-stop {
+    padding: 10px 8px;
+    border-bottom: 1px solid #d9dece;
+  }
+  .world-stop:nth-child(3) {
+    border-right: 0;
+  }
+  .world-stop:nth-child(n + 4) {
+    border-bottom: 0;
+  }
+  .world-go {
+    gap: 6px;
+  }
+  .world-go > span {
+    width: 23px;
+    height: 23px;
+    font-size: 8px;
+  }
+  .world-go strong {
+    font-size: 9px;
+    line-height: 1.5;
+  }
+  .world-read {
+    font-size: 8px;
+    margin-left: 29px;
+    margin-top: 7px;
+  }
+  .world-destinations-label small {
+    font-size: 8px;
+  }
+  .world-footer {
+    left: 6%;
+    bottom: 17px;
+    font-size: 6px;
+    letter-spacing: 1px;
+  }
+  .world-footer > span:last-child {
+    display: none;
+  }
+  .world-loading {
+    top: 50%;
+    width: 250px;
+  }
+  .world-dialog article {
+    padding: 32px 25px;
+  }
+  .world-dialog h2 {
+    font-size: 32px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .world-page * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The walking camera owns the viewport. The editorial layout is retained for overview. */
+.world-view-switch {
+  position: absolute;
+  z-index: 5;
+  top: 96px;
+  right: 4%;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #bbcabc;
+  border-radius: 30px;
+  background: #faf9f1ee;
+}
+.world-view-switch button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  background: transparent;
+  padding: 10px 13px;
+  border-radius: 24px;
+  color: #3c5547;
+  font-size: 11px;
+}
+.world-view-switch button[aria-pressed="true"] {
+  background: #355a46;
+  color: #fffaf0;
+}
+.world-view-walk {
+  background: linear-gradient(#a4d7e8, #d7eced 58%, #eef2dc);
+}
+.world-view-walk .world-canvas {
+  inset: 0;
+}
+.world-view-walk .world-intro {
+  top: 100px;
+  left: 4%;
+  padding: 18px 22px;
+  border: 1px solid #ffffff70;
+  border-radius: 16px;
+  background: #f7f8ecdf;
+  max-width: 300px;
+}
+.world-view-walk .world-intro h1 {
+  font-size: 34px;
+  letter-spacing: -1px;
+  margin: 12px 0;
+}
+.world-view-walk .world-intro > p:not(.world-eyebrow) {
+  font-size: 11px;
+  line-height: 1.7;
+}
+.world-view-walk .world-edition {
+  display: none;
+}
+.world-view-walk .world-guide {
+  top: 166px;
+  background: #f7f8eceb;
+  padding: 15px 18px;
+  border: 1px solid #ffffff80;
+  border-radius: 15px;
+}
+.world-view-walk .world-location {
+  display: none;
+}
+.world-view-walk .world-prompt {
+  bottom: 185px;
+}
+.world-view-walk .world-footer {
+  color: #294638;
+}
+.world-view-walk .world-destinations-label {
+  width: fit-content;
+  padding: 7px 10px;
+  border-radius: 20px;
+  background: #f7f8eceb;
+}
+.world-view-walk .world-destinations-label small {
+  margin-left: 18px;
+}
+@media (max-width: 760px) {
+  .world-view-switch {
+    top: 78px;
+    right: 6%;
+    left: 6%;
+    justify-content: center;
+  }
+  .world-view-switch button {
+    flex: 1;
+    justify-content: center;
+  }
+  .world-view-walk .world-intro {
+    top: 143px;
+    left: 6%;
+    padding: 12px 15px;
+    max-width: 230px;
+  }
+  .world-view-walk .world-intro h1 {
+    font-size: 25px;
+    margin: 7px 0 0;
+  }
+  .world-view-walk .world-intro h1 br {
+    display: none;
+  }
+  .world-view-walk .world-intro h1 em {
+    display: block;
+  }
+  .world-view-walk .world-intro > p:not(.world-eyebrow) {
+    display: none;
+  }
+  .world-view-walk .world-intro .world-eyebrow {
+    font-size: 6px;
+  }
+  .world-view-walk .world-guide {
+    top: 143px;
+    right: 6%;
+    width: 79px;
+    padding: 9px;
+  }
+  .world-view-walk .world-guide .world-progress {
+    margin-top: 4px;
+    padding-top: 5px;
+    font-size: 8px;
+  }
+  .world-view-walk .world-prompt {
+    bottom: 255px;
+  }
+  .world-view-walk .world-dpad {
+    bottom: 316px;
+  }
+}
+
+/* A stable canvas prevents ResizeObserver from snapping the camera on a mode change. */
+.world-page .world-canvas {
+  inset: 0;
+}
+.world-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(#a4d7e8, #d7eced 58%, #eef2dc);
+  opacity: 0;
+  transition: opacity 1.4s cubic-bezier(0.45, 0, 0.55, 1);
+}
+.world-view-walk {
+  background: radial-gradient(ellipse at 52% 46%, #e2e8d7 0, #f4f2e9 58%);
+}
+.world-view-walk::before {
+  opacity: 1;
+}
+.world-intro,
+.world-intro h1,
+.world-intro > p,
+.world-guide,
+.world-prompt,
+.world-dpad {
+  transition:
+    top 1.4s ease,
+    left 1.4s ease,
+    right 1.4s ease,
+    bottom 1.4s ease,
+    padding 1.4s ease,
+    background-color 1.4s ease,
+    border-radius 1.4s ease,
+    font-size 1.4s ease,
+    margin 1.4s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .world-page::before {
+    transition: none;
+  }
+}
+
+.world-emote-controls {
+  position: absolute;
+  z-index: 6;
+  right: 4%;
+  bottom: 306px;
+}
+.world-action-buttons {
+  display: flex;
+  gap: 6px;
+}
+.world-action-buttons button {
+  border: 1px solid #becdbd;
+  border-radius: 22px;
+  padding: 10px 13px;
+  background: #fffdf3ee;
+  font-size: 11px;
+  min-height: 42px;
+}
+.world-action-buttons button[aria-pressed="true"],
+.world-emote-menu button[aria-pressed="true"] {
+  background: #365c45;
+  color: #fff8e8;
+}
+.world-emote-menu {
+  position: absolute;
+  right: 0;
+  bottom: 50px;
+  width: 194px;
+  display: grid;
+  gap: 3px;
+  padding: 8px;
+  background: #fffdf5;
+  border: 1px solid #c4cfbd;
+  border-radius: 14px;
+  box-shadow: 0 8px 30px #213c2520;
+}
+.world-emote-menu button {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 12px;
+  min-height: 44px;
+  text-align: left;
+}
+.world-emote-menu button:hover {
+  background: #e1ead8;
+  color: #294132;
+}
+.world-emote-menu kbd {
+  margin-left: auto;
+  color: #294132;
+}
+.world-emote-status {
+  text-align: right;
+  font-size: 10px;
+  min-height: 21px;
+  color: #294132;
+  text-shadow: 0 1px 3px #fff;
+}
+@media (max-width: 760px) {
+  .world-emote-controls {
+    right: 6%;
+    bottom: 265px;
+  }
+  .world-emote-menu {
+    bottom: 48px;
+  }
+  .world-view-walk .world-prompt {
+    bottom: 375px;
+  }
+  .world-action-buttons button {
+    font-size: 10px;
+    padding: 9px 11px;
+  }
+  .world-emote-status {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 760px) {
+  .world-emote-controls {
+    bottom: 252px;
+  }
+  .world-view-walk .world-prompt {
+    top: 255px;
+    bottom: auto;
+  }
+}
+
+.world-joystick {
+  display: none;
+  position: absolute;
+  z-index: 5;
+  left: 6%;
+  bottom: 300px;
+  width: 124px;
+  text-align: center;
+}
+.world-joystick-base {
+  display: grid;
+  place-items: center;
+  position: relative;
+  width: 124px;
+  height: 124px;
+  border-radius: 50%;
+  border: 1px solid #a4b99baa;
+  background: #f9fcf0a8;
+  box-shadow:
+    inset 0 2px 14px #42613a12,
+    0 5px 20px #2c4b3910;
+  backdrop-filter: blur(8px);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.world-joystick-cross {
+  position: absolute;
+  width: 84px;
+  height: 84px;
+  border: 1px dashed #7f98795c;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.world-joystick-knob {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #809e78;
+  border-radius: 50%;
+  background: linear-gradient(#f9fcef, #dce8cf);
+  box-shadow: 0 3px 9px #30462c25;
+  pointer-events: none;
+}
+.world-joystick-knob > span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #7c9771;
+}
+.world-joystick-label {
+  display: block;
+  margin-top: 10px;
+  font-size: 7px;
+  letter-spacing: 1.6px;
+  color: #35523f;
+}
+@media (max-width: 760px), (pointer: coarse) {
+  .world-page .world-dpad {
+    display: none;
+  }
+  .world-joystick {
+    display: block;
+  }
+}
+@media (min-width: 761px) and (pointer: coarse) {
+  .world-joystick {
+    left: auto;
+    right: 4%;
+    bottom: 150px;
+  }
+}

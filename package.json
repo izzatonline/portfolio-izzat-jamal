@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack --hostname 0.0.0.0",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.5",
