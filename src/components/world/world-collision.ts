@@ -17,6 +17,7 @@ export function createWorldCollision(
   stories: T.Vector3[],
   pond: T.Vector3,
   dock: T.Vector3,
+  pondSize: { x: number; z: number },
 ) {
   const footprint = (center: T.Vector3, x: number, z = x): Footprint => {
     const rotation = new T.Quaternion().setFromUnitVectors(UP, center);
@@ -31,7 +32,7 @@ export function createWorldCollision(
   const obstacles = stories.map((center, i) =>
     footprint(center, i === 2 ? 0.47 : i === 1 ? 0.7 : 0.64),
   );
-  obstacles.push(footprint(pond, 1.13, 0.84));
+  obstacles.push(footprint(pond, pondSize.x, pondSize.z));
   // The cafe table extends beyond its building's footprint.
   const table = new T.Vector3(0.55, R, 0.55)
     .applyQuaternion(obstacles[4].rotation)
@@ -49,11 +50,10 @@ export function createWorldCollision(
   const clear = (a: T.Vector3, b: T.Vector3, margin = 0) => {
     const count = Math.max(1, Math.ceil((a.angleTo(b) * R) / 0.035));
     const sample = new T.Vector3();
+    const arc = new T.Quaternion().setFromUnitVectors(a, b);
+    const rotation = new T.Quaternion();
     for (let i = 0; i <= count; i++) {
-      sample
-        .copy(a)
-        .lerp(b, i / count)
-        .normalize();
+      sample.copy(a).applyQuaternion(rotation.identity().slerp(arc, i / count));
       if (blockedBy(sample, margin)) return false;
     }
     return true;
@@ -106,8 +106,7 @@ export function createWorldCollision(
   goals.push(dock);
   const nodes = rings.flat().filter((p) => !blockedBy(p, 0.015));
   let edges: { index: number; cost: number }[][] | undefined;
-  const route = (start: T.Vector3, index: number) => {
-    const goal = goals[index];
+  const route = (start: T.Vector3, index: number, goal = goals[index]) => {
     if (clear(start, goal)) return [goal.clone()];
     // Cache scenery visibility edges. Only the start and goal change between trips.
     if (!edges) {

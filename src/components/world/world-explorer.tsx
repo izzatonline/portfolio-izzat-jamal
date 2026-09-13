@@ -58,7 +58,8 @@ export default function WorldExplorer() {
     joystick: { x: 0, y: 0, running: false },
   });
   const [fishing, setFishing] = useState<FishingStatus>("idle");
-  const fishingBusy = fishing === "casting" || fishing === "bite";
+  const fishingBusy =
+    fishing === "walking" || fishing === "casting" || fishing === "bite";
   const [jumping, setJumping] = useState(false);
   const onJump = useCallback((value: boolean) => setJumping(value), []);
   const [activeEmote, setActiveEmote] = useState<Emote | null>(null);
@@ -341,13 +342,15 @@ export default function WorldExplorer() {
             <span>
               <small>
                 {near === POND_INDEX
-                  ? fishing === "missed"
-                    ? "A NIBBLE! TRY ANOTHER CAST"
-                    : fishing === "bite"
-                      ? "SOMETHING’S BITING…"
-                      : fishing === "casting"
-                        ? "WAITING FOR A BITE…"
-                        : "TAKE A LITTLE BREAK"
+                  ? fishing === "walking"
+                    ? "WALKING TO THE FISHING PLATFORM…"
+                    : fishing === "missed"
+                      ? "A NIBBLE! TRY ANOTHER CAST"
+                      : fishing === "bite"
+                        ? "SOMETHING’S BITING…"
+                        : fishing === "casting"
+                          ? "WAITING FOR A BITE…"
+                          : "TAKE A LITTLE BREAK"
                   : "YOU’VE FOUND"}
               </small>
               <strong>{placeName(near)}</strong>
@@ -355,7 +358,9 @@ export default function WorldExplorer() {
             <span className="world-prompt-action">
               {near === POND_INDEX
                 ? fishingBusy
-                  ? "Fishing…"
+                  ? fishing === "walking"
+                    ? "Getting ready…"
+                    : "Fishing…"
                   : "Cast line"
                 : "Explore"}{" "}
               <kbd>E</kbd>
@@ -499,6 +504,7 @@ export default function WorldExplorer() {
                 {d.name}
               </DropdownMenuItem>
             ))}
+            <p className="world-menu-heading">TAKE A BREAK</p>
             <DropdownMenuItem
               className="world-destination-menu-item"
               disabled={!ready || failed}

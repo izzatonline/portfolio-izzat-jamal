@@ -1,11 +1,11 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Link from "next/link";
 import { SkillsSection } from "@/components/skills-section";
 import { Projects } from "@/components/projects";
 import { Hero } from "@/components/hero";
+import { Services } from "@/components/services";
+import { CaseStudyHighlights } from "@/components/case-study-highlights";
 import { Learning } from "@/components/learning";
 import { FreelanceRates } from "@/components/freelance-rates";
 import { Experience } from "@/components/experience";
@@ -20,6 +20,9 @@ export default function Home() {
 
         <main className="flex flex-col gap-24">
           <Hero />
+
+          <Services />
+          <CaseStudyHighlights />
 
           {/* Skills Section */}
           <SkillsSection />

@@ -1,6 +1,19 @@
 # Portfolio improvement roadmap
 
-Status: proposed next plan; implementation is not authorized by this document alone.
+Status: implementation started with the user’s instruction to begin this roadmap. The first service and case-study stage is implemented locally; deployment is pending.
+
+## Progress
+
+- [x] Add the three service groups to the homepage, with scope, deliverables, and links to relevant work.
+- [x] Add Services and Case studies to the main navigation.
+- [x] Keep the existing website prices and add a separate enquiry option for specialist work.
+- [x] Implement the `/work` index and design-system, platform SDK, and interactive-portfolio case studies.
+- [x] Base employer case studies on existing portfolio content and engineering articles, preserving co-leadership and team ownership.
+- [ ] Complete a dedicated review on lower-powered devices and record performance measurements for the world.
+- [ ] Deploy the reviewed service and case-study changes.
+- [ ] Begin the New Zealand explorer with an audience, core task, bounded scope, and content sources.
+
+Implementation entry points: `src/components/services.tsx`, `src/components/case-study-highlights.tsx`, `src/lib/case-studies.ts`, and `src/app/work/`.
 
 ## Direction
 
@@ -18,21 +31,21 @@ Organize the services into three groups rather than a flat list of technologies.
 
 ### Websites and apps
 
-| Offering | Positioning and deliverables |
-| --- | --- |
-| Business websites and custom web apps | Clear content, responsive interfaces, product workflows, integrations, and maintainable delivery. |
-| React Native mobile development | Define the supported scope and show a working example. Explicitly state whether backend integration and app-store submission are included. |
-| Deployment and maintenance | Domain configuration, automated deployments, monitoring, and handover. Cloudflare or Netlify are implementation options, selected for project requirements. |
+| Offering                              | Positioning and deliverables                                                                                                                                |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Business websites and custom web apps | Clear content, responsive interfaces, product workflows, integrations, and maintainable delivery.                                                           |
+| React Native mobile development       | Define the supported scope and show a working example. Explicitly state whether backend integration and app-store submission are included.                  |
+| Deployment and maintenance            | Domain configuration, automated deployments, monitoring, and handover. Cloudflare or Netlify are implementation options, selected for project requirements. |
 
 The existing rate card at `/#rates` already covers landing pages, business websites, custom web apps, and maintenance. Keep that entry point and clarify what each package includes.
 
 ### Frontend platforms
 
-| Offering | Positioning and deliverables |
-| --- | --- |
-| React and React Native design systems | A flagship service: shared design tokens, accessible components, documentation, release workflows, and support for adoption across products. Explain which foundations are shared and which components are platform-specific. |
-| SDKs and npm libraries | Help teams share reliable functionality through typed APIs, integration examples, documentation, versioning, automated publishing, and upgrade guidance. |
-| Microfrontend architecture and migration | Help teams assess, introduce, or improve independently deployed frontend applications where team and product requirements justify the complexity. Include migration planning and shared dependency decisions. |
+| Offering                                 | Positioning and deliverables                                                                                                                                                                                                  |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| React and React Native design systems    | A flagship service: shared design tokens, accessible components, documentation, release workflows, and support for adoption across products. Explain which foundations are shared and which components are platform-specific. |
+| SDKs and npm libraries                   | Help teams share reliable functionality through typed APIs, integration examples, documentation, versioning, automated publishing, and upgrade guidance.                                                                      |
+| Microfrontend architecture and migration | Help teams assess, introduce, or improve independently deployed frontend applications where team and product requirements justify the complexity. Include migration planning and shared dependency decisions.                 |
 
 Use **Module Federation with Webpack, Rspack, or Vite** as the technical wording, limited to integrations actually supported and demonstrated. The original term “vitepack” needs clarification before being used in public service copy.
 
@@ -40,11 +53,11 @@ Give specialist platform work a **“Let’s scope your project”** call to act
 
 ### Interactive experiences
 
-| Offering | Positioning and deliverables |
-| --- | --- |
-| Interactive 3D websites | Memorable, navigable experiences with accessible routes to the underlying content. |
-| Destination explorers | Geographic discovery, destination stories, and potentially itinerary planning. |
-| Educational games | Small, polished learning experiences with a specific learning objective and understandable feedback. |
+| Offering                | Positioning and deliverables                                                                         |
+| ----------------------- | ---------------------------------------------------------------------------------------------------- |
+| Interactive 3D websites | Memorable, navigable experiences with accessible routes to the underlying content.                   |
+| Destination explorers   | Geographic discovery, destination stories, and potentially itinerary planning.                       |
+| Educational games       | Small, polished learning experiences with a specific learning objective and understandable feedback. |
 
 ## Showcase projects
 
@@ -52,15 +65,15 @@ Give specialist platform work a **“Let’s scope your project”** call to act
 
 Keep the world as an optional way to explore the portfolio at `/explore`. The classic portfolio remains a direct route to projects, expertise, rates, and contact information.
 
-Current work includes walking and globe views, animated characters, emotes, jumping, mobile joystick movement, and destination navigation. Coffee-emote polish and a fishing activity are being developed locally at the time this plan is written; this roadmap commit does not commit or publish those implementation changes.
+Current work includes walking and globe views, animated characters, emotes, jumping, mobile joystick movement, and destination navigation. The coffee emote now has a larger mug and dedicated sip motion. The enlarged fishing pond sits in a separate clearing, with automatic navigation to a far-side dock and a viewer-facing fishing pose. These features have been checked locally; deployment is tracked separately.
 
 Next steps:
 
-- [ ] Finish and review the larger coffee mug and dedicated sipping animation.
-- [ ] Finish and review the fishing pond: first completed cast gets a nibble; the second catches a fish and opens a service-rate promotion.
-- [ ] Keep the promotion dismissible and keep `/#rates` accessible without playing.
+- [x] Finish and review the larger coffee mug and dedicated sipping animation.
+- [x] Finish and review the fishing pond: first completed cast gets a nibble; the second catches a fish and opens a service-rate promotion.
+- [x] Keep the promotion dismissible and keep `/#rates` accessible without playing.
 - [ ] Review mobile controls, camera transitions, performance, keyboard access, reduced motion, and the fallback when 3D is unavailable.
-- [ ] Present the world as a portfolio project with a short explanation of its design and engineering decisions.
+- [x] Present the world as a portfolio project with a short explanation of its design and engineering decisions.
 
 ### 2. Build a New Zealand explorer after the current world is polished
 
@@ -92,12 +105,12 @@ These differentiators are options to evaluate, not a commitment to build all of 
 
 Use the same domain family with independent repositories and deployments for standalone projects. Repository boundaries and URL structure are separate decisions.
 
-| Project | Repository | Proposed address |
-| --- | --- | --- |
-| Main portfolio, services, rates, and case studies | Existing portfolio repository | `izzatjamal.com` |
-| Interactive portfolio world | Existing portfolio repository for now | `izzatjamal.com/explore` |
-| New Zealand explorer | Separate repository and deployment | `nz.izzatjamal.com` |
-| Educational game | Separate repository and deployment | `learn.izzatjamal.com` |
+| Project                                           | Repository                            | Proposed address         |
+| ------------------------------------------------- | ------------------------------------- | ------------------------ |
+| Main portfolio, services, rates, and case studies | Existing portfolio repository         | `izzatjamal.com`         |
+| Interactive portfolio world                       | Existing portfolio repository for now | `izzatjamal.com/explore` |
+| New Zealand explorer                              | Separate repository and deployment    | `nz.izzatjamal.com`      |
+| Educational game                                  | Separate repository and deployment    | `learn.izzatjamal.com`   |
 
 The proposed subdomains are planning suggestions; this document does not provision them.
 
@@ -108,6 +121,12 @@ Separate deployments can also be served under paths on the main hostname through
 Select Cloudflare or Netlify based on each application's runtime and deployment needs. No hosting migration is required by this plan.
 
 ## Case studies and evidence
+
+Implemented locally:
+
+- `/work/cross-platform-design-system` — XUI, based on the existing project description and design-system article.
+- `/work/business-accounts-sdk` — platform ownership, thin hosts, packages, and adoption tooling, based on the existing portfolio.
+- `/work/interactive-portfolio` — the playable world, controls, navigation, and fishing interaction.
 
 Keep a case study for each significant project on the main portfolio, with a link to its live experience. Each case study should cover:
 

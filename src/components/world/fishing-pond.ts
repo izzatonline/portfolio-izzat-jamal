@@ -1,13 +1,30 @@
 import * as T from "three";
 
-export const POND_NORMAL = new T.Vector3(-0.22, 0.96, -0.12).normalize();
-// A separate approach point keeps the explorer on the near bank, facing the water.
-export const POND_APPROACH = new T.Vector3(0, 12.08, 1.3)
-  .applyQuaternion(
-    new T.Quaternion().setFromUnitVectors(new T.Vector3(0, 1, 0), POND_NORMAL),
-  )
-  .normalize();
-export type FishingStatus = "idle" | "casting" | "bite" | "missed" | "caught";
+// A quiet clearing beyond the five story buildings.
+export const POND_NORMAL = new T.Vector3(-0.32, 0.67, -0.67).normalize();
+export const POND_RADII = { x: 2.05, z: 1.55 };
+const POND_ROTATION = new T.Quaternion().setFromUnitVectors(
+  new T.Vector3(0, 1, 0),
+  POND_NORMAL,
+);
+const POND_INVERSE = POND_ROTATION.clone().invert();
+const pondPoint = (z: number) =>
+  new T.Vector3(0, 12, z).applyQuaternion(POND_ROTATION).normalize();
+export const POND_APPROACH = pondPoint(2.0);
+// The far bank places the water in front of the explorer, toward the viewer.
+export const POND_DOCK = pondPoint(-1.94);
+export function pondDeckHeight(normal: T.Vector3) {
+  if (normal.dot(POND_NORMAL) < 0.96) return 0;
+  const local = normal.clone().multiplyScalar(12).applyQuaternion(POND_INVERSE);
+  return (
+    0.18 *
+    (1 - T.MathUtils.smootherstep(Math.abs(local.x), 0.3, 0.5)) *
+    T.MathUtils.smootherstep(-local.z, 1.05, 1.3) *
+    (1 - T.MathUtils.smootherstep(-local.z, 2.25, 2.6))
+  );
+}
+export type FishingStatus =
+  "idle" | "walking" | "casting" | "bite" | "missed" | "caught";
 export const FISHING_DURATION = 4.8;
 
 export function createFishingPond(world: T.Group) {
@@ -37,25 +54,30 @@ export function createFishingPond(world: T.Group) {
     return m;
   };
   const bank = add(new T.SphereGeometry(1, 32, 12), "#c6bb94", 0, -0.03);
-  bank.scale.set(1.24, 0.13, 0.96);
+  bank.scale.set(2.2, 0.16, 1.7);
   const water = add(new T.SphereGeometry(1, 32, 12), "#5caeb3", 0, 0.018);
-  water.scale.set(1.12, 0.105, 0.83);
+  water.scale.set(POND_RADII.x, 0.115, POND_RADII.z);
   water.castShadow = false;
-  for (let i = 0; i < 7; i++)
+  for (let i = 0; i < 12; i++) {
+    const z = -1.16 - i * 0.125;
+    const point = pondPoint(z);
+    const ground = Math.sqrt(144 - z * z) - 12;
     add(
-      new T.BoxGeometry(0.62, 0.065, 0.13),
+      new T.BoxGeometry(0.82, 0.065, 0.12),
       i % 2 ? "#a47b51" : "#bb9567",
       0,
-      0.09,
-      0.62 + i * 0.13,
+      ground + pondDeckHeight(point) - 0.0325,
+      z,
     );
-  for (const x of [-0.26, 0.26])
-    add(new T.CylinderGeometry(0.035, 0.04, 0.34, 8), "#815c40", x, 0.04, 0.64);
-  for (let i = 0; i < 14; i++) {
-    const a = i * 0.47;
-    if (Math.cos(a) > 0.75) continue;
-    const x = Math.sin(a) * 1.13,
-      z = Math.cos(a) * 0.85;
+  }
+  for (const x of [-0.35, 0.35])
+    for (const z of [-1.28, -2.12])
+      add(new T.CylinderGeometry(0.04, 0.045, 0.4, 8), "#815c40", x, -0.14, z);
+  for (let i = 0; i < 22; i++) {
+    const a = (i * Math.PI * 2) / 22;
+    if (Math.cos(a) < -0.88) continue;
+    const x = Math.sin(a) * 2.08,
+      z = Math.cos(a) * 1.57;
     const rock = add(
       new T.IcosahedronGeometry(0.11 + (i % 3) * 0.025, 0),
       "#b2b69b",
@@ -99,9 +121,9 @@ export function createFishingPond(world: T.Group) {
         Math.PI * 1.8,
       ),
       "#729b60",
-      x,
-      0.125,
-      z,
+      x * 1.7,
+      0.135,
+      z * 1.7,
     );
     pad.rotation.y = x * 4;
   }
@@ -128,7 +150,7 @@ export function createFishingPond(world: T.Group) {
     rippleMaterial,
   );
   ripple.rotation.x = -Math.PI / 2;
-  ripple.position.set(0.05, 0.135, 0.1);
+  ripple.position.set(0.05, 0.145, -0.7);
   pond.add(ripple);
   const fish = new T.Group();
   pond.add(fish);
@@ -189,7 +211,7 @@ export function createFishingPond(world: T.Group) {
         0.05,
         0.17 +
           (bite ? Math.sin(t * 23) * 0.045 : Math.sin(ambient * 2) * 0.012),
-        0.1,
+        -0.7,
       );
       const ripplePhase = (ambient * 0.65) % 1;
       ripple.scale.setScalar(0.8 + ripplePhase * (bite ? 4 : 2));
@@ -216,7 +238,7 @@ export function createFishingPond(world: T.Group) {
         fish.position.set(
           0.05,
           0.16 + Math.sin(leap * Math.PI) * 0.8,
-          0.1 + leap * 0.65,
+          -0.7 - leap * 0.65,
         );
         fish.rotation.set(
           leap * 2,

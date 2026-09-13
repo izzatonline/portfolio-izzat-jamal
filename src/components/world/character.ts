@@ -105,17 +105,24 @@ export async function loadCharacter(
   clips.set("Jump", new T.AnimationClip("Jump", 0.9, jumpTracks));
   clips.set("Coffee", createCoffeeEmote(model, clips.get("Idle")!));
   clips.set("Fishing", createCoffeeEmote(model, clips.get("Idle")!, true));
-  for (const name of ["Wave", "Dance", "Cheer", "Coffee"]) {
+  for (const name of ["Wave", "Dance", "Cheer", "Coffee", "Fishing"]) {
     clips.set(name, withEmoteGaze(clips.get(name)!, name === "Coffee"));
   }
   const fishingRod = new T.Group();
   const shaft = new T.Mesh(
-    new T.CylinderGeometry(0.012, 0.023, 1.45, 8),
-    new T.MeshStandardMaterial({ color: 0x93663e }),
+    new T.CylinderGeometry(0.018, 0.028, 1.45, 8),
+    new T.MeshStandardMaterial({ color: 0x795137 }),
   );
   shaft.position.y = 0.68;
   fishingRod.add(shaft);
   fishingRod.rotation.x = 1.03;
+  fishingRod.rotation.z = 0.4;
+  const grip = new T.Mesh(
+    new T.CylinderGeometry(0.038, 0.04, 0.22, 8),
+    new T.MeshStandardMaterial({ color: 0x344c43 }),
+  );
+  grip.position.y = 0.06;
+  fishingRod.add(grip);
   const rodTip = new T.Object3D();
   rodTip.position.y = 1.405;
   fishingRod.add(rodTip);
