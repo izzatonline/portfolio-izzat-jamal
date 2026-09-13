@@ -16,6 +16,15 @@ import {
   RotateCcw,
   X,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from "@/components/ui/dropdown-menu";
 import { emotes, type Emote } from "./emotes";
 import Joystick from "./joystick";
 import { destinations } from "./destinations";
@@ -40,7 +49,7 @@ export default function WorldExplorer() {
     emote: null,
     running: false,
     jump: false,
-    joystick: { x: 0, y: 0 },
+    joystick: { x: 0, y: 0, running: false },
   });
   const [jumping, setJumping] = useState(false);
   const onJump = useCallback((value: boolean) => setJumping(value), []);
@@ -65,9 +74,12 @@ export default function WorldExplorer() {
     setEmotesOpen(false);
     setTravel(null);
   }, []);
-  const onJoystickInput = useCallback((x: number, y: number) => {
-    controls.current.joystick = { x, y };
-  }, []);
+  const onJoystickInput = useCallback(
+    (x: number, y: number, running: boolean) => {
+      controls.current.joystick = { x, y, running };
+    },
+    [],
+  );
   const onJoystickMove = useCallback(() => setTravel(null), []);
   const dialog = useRef<HTMLDialogElement>(null);
   const lastFocus = useRef<HTMLElement | null>(null);
@@ -93,7 +105,10 @@ export default function WorldExplorer() {
     dialog.current?.close();
     setSelected(null);
     controls.current.paused = false;
-    lastFocus.current?.focus();
+    const focusTarget = lastFocus.current?.isConnected
+      ? lastFocus.current
+      : document.querySelector<HTMLButtonElement>(".world-where-button");
+    focusTarget?.focus();
   }, []);
   useEffect(() => {
     if (selected !== null) dialog.current?.showModal();
@@ -307,8 +322,8 @@ export default function WorldExplorer() {
           </p>
         ) : ready && !failed ? (
           <p>
-            <Footprints size={16} /> Follow a path, or choose a destination
-            below.
+            <Footprints size={16} /> Follow a path, or choose a stop from “Where
+            to?”.
           </p>
         ) : null}
       </div>
@@ -403,44 +418,63 @@ export default function WorldExplorer() {
           </button>
         ))}
       </div>
-      <nav className="world-destinations" aria-label="Portfolio destinations">
-        <div className="world-destinations-label">
-          <Compass size={14} />
-          <span>WHERE TO?</span>
-          <small>Choose a stop to walk there</small>
-        </div>
-        <div className="world-stops">
-          {destinations.map((d, i) => (
-            <div
-              className={`world-stop ${near === i ? "is-near" : ""}`}
-              key={d.id}
-            >
-              <button
-                className="world-go"
-                onClick={() => go(i)}
+      <nav
+        className="world-destination-picker"
+        aria-label="Portfolio destinations"
+      >
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger asChild>
+            <button className="world-where-button">
+              <Compass size={17} /> Where to?
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="world-destination-menu"
+            side="top"
+            align="start"
+            sideOffset={12}
+            collisionPadding={16}
+            aria-label="Choose a destination"
+          >
+            <p className="world-menu-heading">FIVE PLACES TO DISCOVER</p>
+            {destinations.map((d, i) => (
+              <DropdownMenuItem
+                key={d.id}
+                className="world-destination-menu-item"
                 disabled={!ready && !failed}
-                aria-label={`Walk to ${d.name}`}
+                onSelect={() => go(i)}
               >
-                <span style={{ background: d.color }}>
+                <span
+                  className="world-menu-number"
+                  style={{ background: d.color }}
+                >
                   {visited.includes(i) ? (
-                    <Check size={15} />
+                    <Check size={14} />
                   ) : (
                     String(i + 1).padStart(2, "0")
                   )}
                 </span>
-                <strong>{d.name}</strong>
-                <ArrowRight size={14} />
-              </button>
-              <button
-                className="world-read"
-                onClick={() => open(i)}
-                aria-label={`Read ${d.name} story without walking`}
+                {d.name}
+              </DropdownMenuItem>
+            ))}
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                Read without walking
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent
+                className="world-destination-menu"
+                sideOffset={8}
+                collisionPadding={16}
               >
-                Read story
-              </button>
-            </div>
-          ))}
-        </div>
+                {destinations.map((d, i) => (
+                  <DropdownMenuItem key={d.id} onSelect={() => open(i)}>
+                    {d.name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </nav>
       <footer className="world-footer">
         <span>BUILT WITH CURIOSITY & A LITTLE CODE.</span>

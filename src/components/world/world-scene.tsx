@@ -15,7 +15,7 @@ export type WorldControls = {
   emote: Emote | null;
   running: boolean;
   jump: boolean;
-  joystick: { x: number; y: number };
+  joystick: { x: number; y: number; running: boolean };
 };
 type Props = {
   controls: React.RefObject<WorldControls>;
@@ -489,11 +489,11 @@ export default function WorldScene({
         c.reset = false;
         c.target = null;
       }
-      const requestedSpeed = c.paused
-        ? 0
-        : c.running || c.keys.has("shift")
-          ? 4
-          : 2.1;
+      const wantsRun =
+        c.joystick.x || c.joystick.y
+          ? c.joystick.running
+          : c.running || c.keys.has("shift");
+      const requestedSpeed = c.paused ? 0 : wantsRun ? 4 : 2.1;
       let dx = 0,
         dz = 0;
       if (!c.paused) {
