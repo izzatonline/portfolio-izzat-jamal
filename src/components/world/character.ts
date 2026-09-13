@@ -5,6 +5,7 @@ import { createCoffeeCup, createCoffeeEmote } from "./coffee-emote";
 
 import type { Emote } from "./emotes";
 import { withEmoteGaze } from "./emote-gaze";
+import { personaliseCharacter } from "./personalise-character";
 
 export async function loadCharacter(
   parent: T.Group,
@@ -16,6 +17,7 @@ export async function loadCharacter(
     loader.loadAsync("/models/character/simulation.glb"),
   ]);
   const model = asset.scene;
+  personaliseCharacter(model);
   // Remove the source character's game equipment; this is a peaceful explorer.
   model.traverse((o) => {
     if (/Knife|Crossbow|Throwable|Cape/.test(o.name)) o.visible = false;

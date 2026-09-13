@@ -70,6 +70,10 @@ export default function WorldExplorer() {
     [],
   );
   const [view, setView] = useState<"walk" | "globe">("walk");
+  const onRestoreView = useCallback((value: "walk" | "globe") => {
+    controls.current.view = value;
+    setView(value);
+  }, []);
   const [ready, setReady] = useState(false);
   const [failed, setFailed] = useState(false);
   const [near, setNear] = useState<number | null>(null);
@@ -276,6 +280,7 @@ export default function WorldExplorer() {
           onEmote={onEmote}
           onJump={onJump}
           onFishing={onFishing}
+          onRestoreView={onRestoreView}
         />
       )}
       {(!ready || failed) && (

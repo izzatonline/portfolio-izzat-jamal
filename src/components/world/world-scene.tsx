@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import * as T from "three";
 import { loadCharacter } from "./character";
+import { readWorldSession, saveWorldSession } from "./world-session";
 import { createWorldCollision } from "./world-collision";
 import type { Emote } from "./emotes";
 import { destinations, POND_INDEX } from "./destinations";
@@ -37,6 +38,7 @@ type Props = {
   onEmote: (emote: Emote | null) => void;
   onJump: (jumping: boolean) => void;
   onFishing: (status: FishingStatus) => void;
+  onRestoreView: (view: "walk" | "globe") => void;
 };
 const R = 12;
 const UP = new T.Vector3(0, 1, 0);
@@ -56,6 +58,7 @@ export default function WorldScene({
   onEmote,
   onJump,
   onFishing,
+  onRestoreView,
 }: Props) {
   const host = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -402,6 +405,22 @@ export default function WorldScene({
     const body = new T.Group();
     body.rotation.y = Math.PI;
     avatar.add(body);
+    const saved = readWorldSession();
+    if (saved) {
+      world.quaternion.fromArray(saved.rotation).normalize();
+      body.rotation.y = saved.heading;
+      onRestoreView(saved.view);
+    }
+    const savePosition = () => saveWorldSession({
+      rotation: world.quaternion.toArray() as [number, number, number, number],
+      heading: body.rotation.y,
+      view: controls.current.view,
+    });
+    const saveWhenHidden = () => {
+      if (document.hidden) savePosition();
+    };
+    window.addEventListener("pagehide", savePosition);
+    document.addEventListener("visibilitychange", saveWhenHidden);
     let character: Awaited<ReturnType<typeof loadCharacter>> | undefined;
     let disposed = false;
     let posing = false;
@@ -569,6 +588,7 @@ export default function WorldScene({
         c.target = null;
         routeTarget = null;
         route = [];
+        savePosition();
       }
       const wantsRun =
         c.joystick.x || c.joystick.y
@@ -790,6 +810,9 @@ export default function WorldScene({
       renderer.render(scene, camera);
     });
     return () => {
+      savePosition();
+      window.removeEventListener("pagehide", savePosition);
+      document.removeEventListener("visibilitychange", saveWhenHidden);
       disposed = true;
       character?.dispose();
       renderer.setAnimationLoop(null);
@@ -809,6 +832,6 @@ export default function WorldScene({
       renderer.forceContextLoss();
       renderer.domElement.remove();
     };
-  }, [controls, onNear, onReady, onError, onEmote, onJump, onFishing]);
+  }, [controls, onNear, onReady, onError, onEmote, onJump, onFishing, onRestoreView]);
   return <div className="world-canvas" ref={host} aria-hidden="true" />;
 }
